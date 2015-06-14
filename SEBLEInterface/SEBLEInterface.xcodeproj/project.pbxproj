@@ -1,0 +1,381 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		DC04276F1B2DBC4F008F3DDE /* libSEBLEInterface.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DC0427631B2DBC4F008F3DDE /* libSEBLEInterface.a */; };
+		DC04277F1B2DBCC2008F3DDE /* SEBLEInterfaceManager.m in Sources */ = {isa = PBXBuildFile; fileRef = DC04277E1B2DBCC2008F3DDE /* SEBLEInterfaceManager.m */; };
+		DC0427861B2DC55E008F3DDE /* SEBLEInterfaceManager.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = DC04277D1B2DBCC2008F3DDE /* SEBLEInterfaceManager.h */; };
+		DC0427871B2DC566008F3DDE /* SENotifications.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = DC0427801B2DBD61008F3DDE /* SENotifications.h */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		DC0427701B2DBC4F008F3DDE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DC04275B1B2DBC4F008F3DDE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DC0427621B2DBC4F008F3DDE;
+			remoteInfo = SEBLEInterface;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		DC0427611B2DBC4F008F3DDE /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+				DC0427871B2DC566008F3DDE /* SENotifications.h in CopyFiles */,
+				DC0427861B2DC55E008F3DDE /* SEBLEInterfaceManager.h in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		DC0427631B2DBC4F008F3DDE /* libSEBLEInterface.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libSEBLEInterface.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		DC04276E1B2DBC4F008F3DDE /* SEBLEInterfaceTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SEBLEInterfaceTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		DC0427741B2DBC4F008F3DDE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		DC04277D1B2DBCC2008F3DDE /* SEBLEInterfaceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SEBLEInterfaceManager.h; sourceTree = "<group>"; };
+		DC04277E1B2DBCC2008F3DDE /* SEBLEInterfaceManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SEBLEInterfaceManager.m; sourceTree = "<group>"; };
+		DC0427801B2DBD61008F3DDE /* SENotifications.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SENotifications.h; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		DC0427601B2DBC4F008F3DDE /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DC04276B1B2DBC4F008F3DDE /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DC04276F1B2DBC4F008F3DDE /* libSEBLEInterface.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		DC04275A1B2DBC4F008F3DDE = {
+			isa = PBXGroup;
+			children = (
+				DC0427651B2DBC4F008F3DDE /* SEBLEInterface */,
+				DC0427721B2DBC4F008F3DDE /* SEBLEInterfaceTests */,
+				DC0427641B2DBC4F008F3DDE /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		DC0427641B2DBC4F008F3DDE /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				DC0427631B2DBC4F008F3DDE /* libSEBLEInterface.a */,
+				DC04276E1B2DBC4F008F3DDE /* SEBLEInterfaceTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		DC0427651B2DBC4F008F3DDE /* SEBLEInterface */ = {
+			isa = PBXGroup;
+			children = (
+				DC04277D1B2DBCC2008F3DDE /* SEBLEInterfaceManager.h */,
+				DC04277E1B2DBCC2008F3DDE /* SEBLEInterfaceManager.m */,
+				DC0427801B2DBD61008F3DDE /* SENotifications.h */,
+			);
+			path = SEBLEInterface;
+			sourceTree = "<group>";
+		};
+		DC0427721B2DBC4F008F3DDE /* SEBLEInterfaceTests */ = {
+			isa = PBXGroup;
+			children = (
+				DC0427731B2DBC4F008F3DDE /* Supporting Files */,
+			);
+			path = SEBLEInterfaceTests;
+			sourceTree = "<group>";
+		};
+		DC0427731B2DBC4F008F3DDE /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				DC0427741B2DBC4F008F3DDE /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		DC0427621B2DBC4F008F3DDE /* SEBLEInterface */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DC0427771B2DBC4F008F3DDE /* Build configuration list for PBXNativeTarget "SEBLEInterface" */;
+			buildPhases = (
+				DC04275F1B2DBC4F008F3DDE /* Sources */,
+				DC0427601B2DBC4F008F3DDE /* Frameworks */,
+				DC0427611B2DBC4F008F3DDE /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SEBLEInterface;
+			productName = SEBLEInterface;
+			productReference = DC0427631B2DBC4F008F3DDE /* libSEBLEInterface.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		DC04276D1B2DBC4F008F3DDE /* SEBLEInterfaceTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DC04277A1B2DBC4F008F3DDE /* Build configuration list for PBXNativeTarget "SEBLEInterfaceTests" */;
+			buildPhases = (
+				DC04276A1B2DBC4F008F3DDE /* Sources */,
+				DC04276B1B2DBC4F008F3DDE /* Frameworks */,
+				DC04276C1B2DBC4F008F3DDE /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				DC0427711B2DBC4F008F3DDE /* PBXTargetDependency */,
+			);
+			name = SEBLEInterfaceTests;
+			productName = SEBLEInterfaceTests;
+			productReference = DC04276E1B2DBC4F008F3DDE /* SEBLEInterfaceTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		DC04275B1B2DBC4F008F3DDE /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0630;
+				ORGANIZATIONNAME = "Andre Green";
+				TargetAttributes = {
+					DC0427621B2DBC4F008F3DDE = {
+						CreatedOnToolsVersion = 6.3.2;
+					};
+					DC04276D1B2DBC4F008F3DDE = {
+						CreatedOnToolsVersion = 6.3.2;
+					};
+				};
+			};
+			buildConfigurationList = DC04275E1B2DBC4F008F3DDE /* Build configuration list for PBXProject "SEBLEInterface" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = DC04275A1B2DBC4F008F3DDE;
+			productRefGroup = DC0427641B2DBC4F008F3DDE /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				DC0427621B2DBC4F008F3DDE /* SEBLEInterface */,
+				DC04276D1B2DBC4F008F3DDE /* SEBLEInterfaceTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		DC04276C1B2DBC4F008F3DDE /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		DC04275F1B2DBC4F008F3DDE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DC04277F1B2DBCC2008F3DDE /* SEBLEInterfaceManager.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DC04276A1B2DBC4F008F3DDE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		DC0427711B2DBC4F008F3DDE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DC0427621B2DBC4F008F3DDE /* SEBLEInterface */;
+			targetProxy = DC0427701B2DBC4F008F3DDE /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		DC0427751B2DBC4F008F3DDE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		DC0427761B2DBC4F008F3DDE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		DC0427781B2DBC4F008F3DDE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		DC0427791B2DBC4F008F3DDE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		DC04277B1B2DBC4F008F3DDE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+				);
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = SEBLEInterfaceTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		DC04277C1B2DBC4F008F3DDE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = SEBLEInterfaceTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		DC04275E1B2DBC4F008F3DDE /* Build configuration list for PBXProject "SEBLEInterface" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DC0427751B2DBC4F008F3DDE /* Debug */,
+				DC0427761B2DBC4F008F3DDE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		DC0427771B2DBC4F008F3DDE /* Build configuration list for PBXNativeTarget "SEBLEInterface" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DC0427781B2DBC4F008F3DDE /* Debug */,
+				DC0427791B2DBC4F008F3DDE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		DC04277A1B2DBC4F008F3DDE /* Build configuration list for PBXNativeTarget "SEBLEInterfaceTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DC04277B1B2DBC4F008F3DDE /* Debug */,
+				DC04277C1B2DBC4F008F3DDE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = DC04275B1B2DBC4F008F3DDE /* Project object */;
+}
