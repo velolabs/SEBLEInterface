@@ -14,7 +14,7 @@
 #define kPeriphialDataLocalName @"SigEazeBLE"
 #define kPeriphialUIDD  @"713D0000-503E-4C75-BA94-3148F18D941E"
 #define kServiceUIDD    @"713D0002-503E-4C75-BA94-3148F18D941E"
-
+#define kSEBLEInterfaceSubscribedServices   @"kSEBLEInterfaceSubscribedServices"
 
 typedef NS_ENUM(UInt8, SEDataId) {
     SEDataIdNone = 0,
@@ -26,9 +26,9 @@ typedef NS_ENUM(UInt8, SEDataId) {
 
 @property (nonatomic, strong) CBCentralManager *centralManager;
 @property (nonatomic, strong) CBPeripheral *arduinoPeriphial;
+@property (nonatomic, strong) NSMutableDictionary *devices;
 
 @end
-
 
 @implementation SEBLEInterfaceMangager
 
@@ -36,7 +36,8 @@ typedef NS_ENUM(UInt8, SEDataId) {
 {
     self = [super init];
     if (self) {
-        self.centralManager = [[CBCentralManager alloc] initWithDelegate:self queue:nil];
+        _centralManager = [[CBCentralManager alloc] initWithDelegate:self queue:nil];
+        _devices = [NSMutableDictionary new];
     }
     
     return self;
@@ -56,11 +57,11 @@ typedef NS_ENUM(UInt8, SEDataId) {
 
 - (void)centralManager:(CBCentralManager *)central didConnectPeripheral:(CBPeripheral *)peripheral
 {
-    if (peripheral == self.arduinoPeriphial) {
-        NSLog(@"Connected Periphial: %@", self.arduinoPeriphial.name);
-        self.arduinoPeriphial.delegate = self;
-        [self.arduinoPeriphial discoverServices:nil];
-    }
+//    if (peripheral == self.arduinoPeriphial) {
+//        NSLog(@"Connected Periphial: %@", self.arduinoPeriphial.name);
+//        self.arduinoPeriphial.delegate = self;
+//        [self.arduinoPeriphial discoverServices:nil];
+//    }
 }
 
 - (void)centralManager:(CBCentralManager *)central didRetrievePeripherals:(NSArray *)peripherals
@@ -68,35 +69,47 @@ typedef NS_ENUM(UInt8, SEDataId) {
     
 }
 
-- (void)centralManager:(CBCentralManager *)central didDiscoverPeripheral:(CBPeripheral *)peripheral advertisementData:(NSDictionary *)advertisementData RSSI:(NSNumber *)RSSI
+- (void)centralManager:(CBCentralManager *)central
+    didDiscoverPeripheral:(CBPeripheral *)peripheral
+     advertisementData:(NSDictionary *)advertisementData
+                  RSSI:(NSNumber *)RSSI
 {
     NSLog(@"found periphial named: %@ with advertistment data: %@", peripheral.name, advertisementData.description);
-    if (advertisementData && [advertisementData[kPeriphialDataLocalNameKey] isEqualToString:kPeriphialDataLocalName] && !self.arduinoPeriphial) {
-        self.arduinoPeriphial = peripheral;
-        self.arduinoPeriphial.delegate = self;
-        [self.centralManager connectPeripheral:self.arduinoPeriphial options:nil];
-        [self.centralManager stopScan];
-    }
+//    if (advertisementData && [advertisementData[kPeriphialDataLocalNameKey] isEqualToString:kPeriphialDataLocalName] && !self.arduinoPeriphial) {
+//        self.arduinoPeriphial = peripheral;
+//        self.arduinoPeriphial.delegate = self;
+//        [self.centralManager connectPeripheral:self.arduinoPeriphial options:nil];
+//        [self.centralManager stopScan];
+//    }
 }
 
 - (void)centralManagerDidUpdateState:(CBCentralManager *)central
 {
-    // Determine the state of the peripheral
-    if (central.state == CBCentralManagerStatePoweredOff) {
-        NSLog(@"CoreBluetooth BLE hardware is powered off");
-    } else if (central.state == CBCentralManagerStatePoweredOn) {
-        NSLog(@"CoreBluetooth BLE hardware is powered on and ready");
-        [self.centralManager scanForPeripheralsWithServices:nil options:nil];
-    } else if (central.state == CBCentralManagerStateUnauthorized) {
-        NSLog(@"CoreBluetooth BLE state is unauthorized");
-    } else if (central.state == CBCentralManagerStateUnknown) {
-        NSLog(@"CoreBluetooth BLE state is unknown");
-    } else if (central.state == CBCentralManagerStateUnsupported) {
-        NSLog(@"CoreBluetooth BLE hardware is unsupported on this platform");
+    // Determine the state of the periphera
+    switch (central.state) {
+        case CBCentralManagerStatePoweredOff:
+             NSLog(@"CoreBluetooth BLE hardware is powered off");
+            break;
+        case CBCentralManagerStatePoweredOn:
+            NSLog(@"CoreBluetooth BLE hardware is powered on and ready");
+            [self.centralManager scanForPeripheralsWithServices:nil options:nil];
+            break;
+        case CBCentralManagerStateUnauthorized:
+            NSLog(@"CoreBluetooth BLE state is unauthorized");
+            break;
+        case CBCentralManagerStateUnknown:
+            NSLog(@"CoreBluetooth BLE state is unknown");
+            break;
+        case CBCentralManagerStateUnsupported:
+            NSLog(@"CoreBluetooth BLE hardware is unsupported on this platform");
+        default:
+            break;
     }
 }
 
-- (void)centralManager:(CBCentralManager *)central didDisconnectPeripheral:(CBPeripheral *)peripheral error:(NSError *)error
+- (void)centralManager:(CBCentralManager *)central
+    didDisconnectPeripheral:(CBPeripheral *)peripheral
+                 error:(NSError *)error
 {
     if (peripheral == self.arduinoPeriphial) {
         self.arduinoPeriphial = nil;
@@ -113,7 +126,9 @@ typedef NS_ENUM(UInt8, SEDataId) {
     }
 }
 
-- (void)peripheral:(CBPeripheral *)peripheral didDiscoverCharacteristicsForService:(CBService *)service error:(NSError *)error
+- (void)peripheral:(CBPeripheral *)peripheral
+    didDiscoverCharacteristicsForService:(CBService *)service
+             error:(NSError *)error
 {
     if (error) {
         NSLog(@"error discovering characteristic for service: %@", error.localizedDescription);
@@ -132,7 +147,9 @@ typedef NS_ENUM(UInt8, SEDataId) {
     }
 }
 
-- (void)peripheral:(CBPeripheral *)peripheral didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error
+- (void)peripheral:(CBPeripheral *)peripheral
+    didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic
+             error:(NSError *)error
 {
     NSData *data = characteristic.value;
     const uint8_t *recievedData = data.bytes;
@@ -183,8 +200,9 @@ typedef NS_ENUM(UInt8, SEDataId) {
 
 - (void)valuesUpdated:(NSArray *)values
 {
-    if ([self.delegate respondsToSelector:@selector(bleInterfaceManager:didUpdateVales:)]) {
-        [self.delegate bleInterfaceManager:self didUpdateVales:values];
+    if ([self.delegate respondsToSelector:@selector(bleInterfaceManager:didUpdateDeviceValues:)]) {
+        // TODO -- Don't leave device values as nil.
+        [self.delegate bleInterfaceManager:self didUpdateDeviceValues:nil];
     }
 }
 
