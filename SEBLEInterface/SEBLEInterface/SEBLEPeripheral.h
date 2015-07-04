@@ -9,14 +9,19 @@
 #import <Foundation/Foundation.h>
 @import CoreBluetooth;
 
+
+#define kSEBLEPeripheralService @"SEBLEPeripheralService"
+#define kSEBLEPeripheralCharacteristics @"SEBLEPeripheralCharacteristics"
+
+
 @interface SEBLEPeripheral : NSObject
 
 @property (nonatomic, strong) CBPeripheral *peripheral;
-@property (nonatomic, copy) NSArray *UUIDs;
+@property (nonatomic, copy) NSMutableDictionary *services;
+@property (nonatomic, strong) CBUUID *UUID;
+- (id)initWithPeripheral:(CBPeripheral *)peripheral UUID:(CBUUID *)UUID;
 
-- (id)initWithPeripheral:(CBPeripheral *)peripheral UUIDs:(NSArray *)UUIDs;
-
-+ (id)withPeripheral:(CBPeripheral *)peripheral andUUIDs:(NSArray *)UUIDs;
-- (NSString *)UUID;
++ (id)withPeripheral:(CBPeripheral *)peripheral UUID:(CBUUID *)UUID;
+- (void)addService:(CBService *)service;
 
 @end

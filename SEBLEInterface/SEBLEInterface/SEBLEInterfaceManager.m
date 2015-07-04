@@ -74,51 +74,50 @@
     }
 }
 
-#pragma mark - CBPeripheral Delegate Methods
-
-- (void)centralManager:(CBCentralManager *)central didConnectPeripheral:(CBPeripheral *)peripheral
+- (void)addPeripheralNamed:(NSString *)name
 {
-//    if (peripheral == self.arduinoPeriphial) {
-//        NSLog(@"Connected Periphial: %@", self.arduinoPeriphial.name);
-//        self.arduinoPeriphial.delegate = self;
-//        [self.arduinoPeriphial discoverServices:nil];
-//    }
-}
-
-- (void)centralManager:(CBCentralManager *)central didRetrievePeripherals:(NSArray *)peripherals
-{
-    
-}
-
-- (void)centralManager:(CBCentralManager *)central
-    didDiscoverPeripheral:(CBPeripheral *)peripheral
-     advertisementData:(NSDictionary *)advertisementData
-                  RSSI:(NSNumber *)RSSI
-{
-    NSLog(@"found periphial named: %@ with advertistment data: %@", peripheral.name, advertisementData.description);
-    
-    if (advertisementData && advertisementData[kSEBLEInterfaceDataLocalName] && advertisementData[kSEBLEInterfaceDataServiceUUIDs]) {
-        SEBLEPeripheral *blePeripheral = [SEBLEPeripheral withPeripheral:peripheral
-                                                                andUUIDs:advertisementData[kSEBLEInterfaceDataServiceUUIDs]];
-        if (!self.notConnectedPeripherals[blePeripheral.UUID]) {
-            self.notConnectedPeripherals[blePeripheral.UUID] = blePeripheral;
-            
-            if ([self.delegate respondsToSelector:@selector(bleInterfaceManager:discoveredPeripheral:)]) {
-                [self.delegate bleInterfaceManager:self discoveredPeripheral:blePeripheral];
-            }
-        }
-        
-        // this method needs to be added to the callback when controller has intialized
-        // this peripheral
-        //[self.centralManager connectPeripheral:self.arduinoPeriphial options:nil];
+    if (self.notConnectedPeripherals[name]) {
+        NSLog(@"Adding peripheral named: %@", name);
+        SEBLEPeripheral *blePeripheral = self.notConnectedPeripherals[name];
+        [self.centralManager connectPeripheral:blePeripheral.peripheral options:nil];
     }
 }
+
+- (void)removePeripheralNamed:(NSString *)name
+{
+    
+}
+
+- (SEBLEPeripheral *)seblePeripheralForCBPeripheral:(CBPeripheral *)peripheral
+{
+    SEBLEPeripheral *blePeripheral;
+    if (self.connectedPeripherals[peripheral.name]) {
+        blePeripheral = self.connectedPeripherals[peripheral.name];
+    } else if (self.notConnectedPeripherals[peripheral.name]) {
+        blePeripheral = self.notConnectedPeripherals[peripheral.name];
+    }
+
+    return blePeripheral;
+}
+
+- (void)writeToPeripheralWithUDID:(NSString *)peripheralUUID
+                      serviceUUID:(NSString *)serviceUUID
+               characteristicUUID:(NSString *)characteristicUUID
+                            data:(NSData *)data
+{
+    CBPeripheral *peripheral = self.connectedPeripherals[[self CBUUIDFromString:peripheralUUID]];
+    SEBLEPeripheral *blePeripheral = [self seblePeripheralForCBPeripheral:peripheral];
+    CBCharacteristic *characteristic = blePeripheral.services[peripheral.name][kSEBLEPeripheralService][[self CBUUIDFromString:characteristicUUID]];
+    [peripheral writeValue:data forCharacteristic:characteristic type:CBCharacteristicWriteWithResponse];
+}
+
+#pragma mark - CBPeripheral Delegate Methods
 
 - (void)centralManagerDidUpdateState:(CBCentralManager *)central
 {
     switch (central.state) {
         case CBCentralManagerStatePoweredOff:
-             NSLog(@"CoreBluetooth BLE hardware is powered off");
+            NSLog(@"CoreBluetooth BLE hardware is powered off");
             break;
         case CBCentralManagerStatePoweredOn:
             NSLog(@"CoreBluetooth BLE hardware is powered on and ready");
@@ -139,47 +138,66 @@
 }
 
 - (void)centralManager:(CBCentralManager *)central
-    didDisconnectPeripheral:(CBPeripheral *)peripheral
-                 error:(NSError *)error
+ didDiscoverPeripheral:(CBPeripheral *)peripheral
+     advertisementData:(NSDictionary *)advertisementData
+                  RSSI:(NSNumber *)RSSI
 {
-    if (peripheral == self.arduinoPeriphial) {
-        self.arduinoPeriphial = nil;
-    }
+    NSLog(@"found periphial named: %@ with advertistment data: %@", peripheral.name, advertisementData.description);
     
-    [self.centralManager scanForPeripheralsWithServices:nil options:nil];
+    if (advertisementData && advertisementData[kSEBLEInterfaceDataLocalName] && advertisementData[kSEBLEInterfaceDataServiceUUIDs]) {
+        NSArray *UUIDs = advertisementData[kSEBLEInterfaceDataServiceUUIDs];
+        SEBLEPeripheral *blePeripheral = [SEBLEPeripheral withPeripheral:peripheral UUID:UUIDs[0]];
+        if (!self.notConnectedPeripherals[peripheral.name]) {
+            self.notConnectedPeripherals[peripheral.name] = blePeripheral;
+            
+            if ([self.delegate respondsToSelector:@selector(bleInterfaceManager:discoveredPeripheral:)]) {
+                [self.delegate bleInterfaceManager:self discoveredPeripheral:blePeripheral];
+            }
+        }
+    }
+}
+
+- (void)centralManager:(CBCentralManager *)central didConnectPeripheral:(CBPeripheral *)peripheral
+{
+    if (self.notConnectedPeripherals[peripheral.name]) {
+        SEBLEPeripheral *blePeripheral = self.notConnectedPeripherals[peripheral.name];
+        [self.notConnectedPeripherals removeObjectForKey:peripheral.name];
+        self.connectedPeripherals[peripheral.name] = blePeripheral;
+        peripheral.delegate = self;
+        [peripheral discoverServices:nil];
+    }
 }
 
 - (void)peripheral:(CBPeripheral *)peripheral didDiscoverServices:(NSError *)error
 {
     for (CBService *service in peripheral.services) {
         NSLog(@"Discovered service: %@", service.UUID);
+        SEBLEPeripheral *blePeripheral = [self seblePeripheralForCBPeripheral:peripheral];
+        if (blePeripheral) {
+            [blePeripheral addService:service];
+        }
         [peripheral discoverCharacteristics:nil forService:service];
     }
 }
 
 - (void)peripheral:(CBPeripheral *)peripheral
-    didDiscoverCharacteristicsForService:(CBService *)service
+didDiscoverCharacteristicsForService:(CBService *)service
              error:(NSError *)error
 {
     if (error) {
         NSLog(@"error discovering characteristic for service: %@", error.localizedDescription);
-        return;
     } else {
-        NSLog(@"service characteristics: %@", service.characteristics);
-        
-        if (peripheral == self.arduinoPeriphial) {
-            for (CBCharacteristic *characteristic in service.characteristics) {
-                
-//                if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:kServiceUIDD]]) {
-//                    [self.arduinoPeriphial setNotifyValue:YES forCharacteristic:characteristic];
-//                }
-            }
+        for (CBCharacteristic *characteristic in service.characteristics) {
+            NSLog(@"Discoverd characteristic with UUID: %@", characteristic.UUID);
+            SEBLEPeripheral *blePeripheral = [self seblePeripheralForCBPeripheral:peripheral];
+            blePeripheral.services[service.UUID][kSEBLEPeripheralCharacteristics][characteristic.UUID] = characteristic;
+            [peripheral setNotifyValue:YES forCharacteristic:characteristic];
         }
     }
 }
 
 - (void)peripheral:(CBPeripheral *)peripheral
-    didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic
+didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic
              error:(NSError *)error
 {
     NSData *data = characteristic.value;
@@ -199,6 +217,26 @@
     
     [self valuesUpdated:numbers];
     NSLog(@"there are %ld sensor values. they are: %@", (long)numbers.count, numbers);
+}
+
+- (void)peripheral:(CBPeripheral *)peripheral didWriteValueForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error
+{
+    
+}
+- (void)centralManager:(CBCentralManager *)central didRetrievePeripherals:(NSArray *)peripherals
+{
+    
+}
+
+- (void)centralManager:(CBCentralManager *)central
+    didDisconnectPeripheral:(CBPeripheral *)peripheral
+                 error:(NSError *)error
+{
+    if (peripheral == self.arduinoPeriphial) {
+        self.arduinoPeriphial = nil;
+    }
+    
+    [self.centralManager scanForPeripheralsWithServices:nil options:nil];
 }
 
 - (uint16_t)value:(uint8_t)value forIndex:(int)index

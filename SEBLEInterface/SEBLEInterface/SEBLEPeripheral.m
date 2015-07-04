@@ -10,25 +10,30 @@
 
 @implementation SEBLEPeripheral
 
-- (id)initWithPeripheral:(CBPeripheral *)peripheral UUIDs:(NSArray *)UUIDs
+- (id)initWithPeripheral:(CBPeripheral *)peripheral UUID:(CBUUID *)UUID
 {
     self = [super init];
     if (self) {
         _peripheral = peripheral;
-        _UUIDs       = UUIDs;
+        _services = [NSMutableDictionary new];
+        _UUID = UUID;
     }
     
     return  self;
 }
 
-+ (id)withPeripheral:(CBPeripheral *)peripheral andUUIDs:(NSArray *)UUIDs
++ (id)withPeripheral:(CBPeripheral *)peripheral UUID:(CBUUID *)UUID
 {
-    return [[self alloc] initWithPeripheral:peripheral UUIDs:UUIDs];
+    return [[self alloc] initWithPeripheral:peripheral UUID:UUID];
 }
 
-- (NSString *)UUID
+- (void)addService:(CBService *)service
 {
-    return self.UUIDs.firstObject;
+    if (!self.services[service.UUID]) {
+        self.services[service.UUID] = @{kSEBLEPeripheralService:service,
+                                        kSEBLEPeripheralCharacteristics:[NSMutableDictionary new]
+                                        };
+    }
 }
 @end
 
