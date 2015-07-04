@@ -31,6 +31,8 @@
 - (void)addPeripheralWithUUID:(NSString *)UUID;
 - (void)removePeripheralWithUUID:(NSString *)UUID;
 - (BOOL)writeToDeviveWithUDID:(NSString *)UDID data:(u_int8_t)data;
+- (void)startScan;
+- (void)stopScan;
 
 // remove me...just for testing
 - (void)runTests;
