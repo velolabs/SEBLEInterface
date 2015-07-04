@@ -12,13 +12,14 @@
 @import QuartzCore;
 
 @class SEBLEInterfaceMangager;
+@class SEBLEPeripheral;
 
 @protocol SEBLEInterfaceManagerDelegate <NSObject>
 
 - (void)bleInterfaceManager:(SEBLEInterfaceMangager *)interfaceManager didUpdateDeviceValues:(NSDictionary *)values;
-- (void)bleInterfaceManager:(SEBLEInterfaceMangager *)interfaceManger discoveredPeriphealWithInfo:(NSDictionary *)info;
-- (void)bleInterfaceManager:(SEBLEInterfaceMangager *)interfaceManager connectedPeripheralNamed:(NSString *)peripheralName;
-
+- (void)bleInterfaceManager:(SEBLEInterfaceMangager *)interfaceManger discoveredPeripheral:(SEBLEPeripheral *)peripheral;
+- (void)bleInterfaceManager:(SEBLEInterfaceMangager *)interfaceManager connectPeripheral:(SEBLEPeripheral *)peripheral;
+- (void)bleInterfaceManager:(SEBLEInterfaceMangager *)interfaceManager removePeripheral:(SEBLEPeripheral *)peripheral;
 
 @end
 
@@ -27,8 +28,8 @@
 @property (nonatomic, weak) id<SEBLEInterfaceManagerDelegate>delegate;
 
 + (id)manager;
-- (void)addDeviceWithUDID:(NSString *)UDID;
-- (void)removeDeviceWithUDID:(NSString *)UDID;
+- (void)addPeripheralWithUUID:(NSString *)UUID;
+- (void)removePeripheralWithUUID:(NSString *)UUID;
 - (BOOL)writeToDeviveWithUDID:(NSString *)UDID data:(u_int8_t)data;
 
 // remove me...just for testing

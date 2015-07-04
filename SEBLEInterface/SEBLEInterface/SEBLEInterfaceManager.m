@@ -8,27 +8,24 @@
 
 #import "SEBLEInterfaceManager.h"
 #import "SENotifications.h"
+#import "SEBLEPeripheral.h"
 
-#define kPeriphialName  @"SigEazeBLE"
-#define kPeriphialDataLocalNameKey @"kCBAdvDataLocalName"
-#define kPeriphialDataLocalName @"SigEazeBLE"
-#define kPeriphialUIDD  @"713D0000-503E-4C75-BA94-3148F18D941E"
-#define kServiceUIDD    @"713D0002-503E-4C75-BA94-3148F18D941E"
+
 #define kSEBLEInterfaceSubscribedServices   @"kSEBLEInterfaceSubscribedServices"
-
-typedef NS_ENUM(UInt8, SEDataId) {
-    SEDataIdNone = 0,
-    SEDataIdTach
-};
+#define kSEBLEInterfaceDataLocalName        @"kCBAdvDataLocalName"
+#define kSEBLEInterfaceDataServiceUUIDs     @"kCBAdvDataServiceUUIDs"
+#define kSEBLEInterfacePeripheral           @"kSEBLEInterfacePeripheral"
 
 
 @interface SEBLEInterfaceMangager()
 
 @property (nonatomic, strong) CBCentralManager *centralManager;
 @property (nonatomic, strong) CBPeripheral *arduinoPeriphial;
-@property (nonatomic, strong) NSMutableDictionary *devices;
+@property (nonatomic, strong) NSMutableDictionary *notConnectedPeripherals;
+@property (nonatomic, strong) NSMutableDictionary *connectedPeripherals;
 
 @end
+
 
 @implementation SEBLEInterfaceMangager
 
@@ -37,7 +34,8 @@ typedef NS_ENUM(UInt8, SEDataId) {
     self = [super init];
     if (self) {
         _centralManager = [[CBCentralManager alloc] initWithDelegate:self queue:nil];
-        _devices = [NSMutableDictionary new];
+        _notConnectedPeripherals = [NSMutableDictionary new];
+        _connectedPeripherals = [NSMutableDictionary new];
     }
     
     return self;
@@ -75,12 +73,22 @@ typedef NS_ENUM(UInt8, SEDataId) {
                   RSSI:(NSNumber *)RSSI
 {
     NSLog(@"found periphial named: %@ with advertistment data: %@", peripheral.name, advertisementData.description);
-//    if (advertisementData && [advertisementData[kPeriphialDataLocalNameKey] isEqualToString:kPeriphialDataLocalName] && !self.arduinoPeriphial) {
-//        self.arduinoPeriphial = peripheral;
-//        self.arduinoPeriphial.delegate = self;
-//        [self.centralManager connectPeripheral:self.arduinoPeriphial options:nil];
-//        [self.centralManager stopScan];
-//    }
+    
+    if (advertisementData && advertisementData[kSEBLEInterfaceDataLocalName] && advertisementData[kSEBLEInterfaceDataServiceUUIDs]) {
+        SEBLEPeripheral *blePeripheral = [SEBLEPeripheral withPeripheral:peripheral
+                                                                andUUIDs:advertisementData[kSEBLEInterfaceDataServiceUUIDs]];
+        if (!self.notConnectedPeripherals[blePeripheral.UUID]) {
+            self.notConnectedPeripherals[blePeripheral.UUID] = blePeripheral;
+            
+            if ([self.delegate respondsToSelector:@selector(bleInterfaceManager:discoveredPeripheral:)]) {
+                [self.delegate bleInterfaceManager:self discoveredPeripheral:blePeripheral];
+            }
+        }
+        
+        // this method needs to be added to the callback when controller has intialized
+        // this peripheral
+        //[self.centralManager connectPeripheral:self.arduinoPeriphial options:nil];
+    }
 }
 
 - (void)centralManagerDidUpdateState:(CBCentralManager *)central
@@ -139,9 +147,9 @@ typedef NS_ENUM(UInt8, SEDataId) {
         if (peripheral == self.arduinoPeriphial) {
             for (CBCharacteristic *characteristic in service.characteristics) {
                 
-                if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:kServiceUIDD]]) {
-                    [self.arduinoPeriphial setNotifyValue:YES forCharacteristic:characteristic];
-                }
+//                if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:kServiceUIDD]]) {
+//                    [self.arduinoPeriphial setNotifyValue:YES forCharacteristic:characteristic];
+//                }
             }
         }
     }
