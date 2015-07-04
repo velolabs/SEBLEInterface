@@ -7,7 +7,6 @@
 //
 
 #import "SEBLEInterfaceManager.h"
-#import "SENotifications.h"
 #import "SEBLEPeripheral.h"
 
 
@@ -23,6 +22,7 @@
 @property (nonatomic, strong) CBPeripheral *arduinoPeriphial;
 @property (nonatomic, strong) NSMutableDictionary *notConnectedPeripherals;
 @property (nonatomic, strong) NSMutableDictionary *connectedPeripherals;
+@property (nonatomic, assign) BOOL isPoweredOn;
 
 @end
 
@@ -36,6 +36,7 @@
         _centralManager = [[CBCentralManager alloc] initWithDelegate:self queue:nil];
         _notConnectedPeripherals = [NSMutableDictionary new];
         _connectedPeripherals = [NSMutableDictionary new];
+        _isPoweredOn = NO;
     }
     
     return self;
@@ -52,6 +53,28 @@
     
     return bleManager;
 }
+
+- (void)startScan
+{
+    if (self.isPoweredOn) {
+        [self.centralManager scanForPeripheralsWithServices:nil options:nil];
+    }
+}
+
+- (void)stopScan
+{
+    [self.centralManager stopScan];
+}
+
+- (void)valuesUpdated:(NSArray *)values
+{
+    if ([self.delegate respondsToSelector:@selector(bleInterfaceManager:didUpdateDeviceValues:)]) {
+        // TODO -- Don't leave device values as nil.
+        [self.delegate bleInterfaceManager:self didUpdateDeviceValues:nil];
+    }
+}
+
+#pragma mark - CBPeripheral Delegate Methods
 
 - (void)centralManager:(CBCentralManager *)central didConnectPeripheral:(CBPeripheral *)peripheral
 {
@@ -93,14 +116,13 @@
 
 - (void)centralManagerDidUpdateState:(CBCentralManager *)central
 {
-    // Determine the state of the periphera
     switch (central.state) {
         case CBCentralManagerStatePoweredOff:
              NSLog(@"CoreBluetooth BLE hardware is powered off");
             break;
         case CBCentralManagerStatePoweredOn:
             NSLog(@"CoreBluetooth BLE hardware is powered on and ready");
-            [self.centralManager scanForPeripheralsWithServices:nil options:nil];
+            self.isPoweredOn = YES;
             break;
         case CBCentralManagerStateUnauthorized:
             NSLog(@"CoreBluetooth BLE state is unauthorized");
@@ -110,6 +132,7 @@
             break;
         case CBCentralManagerStateUnsupported:
             NSLog(@"CoreBluetooth BLE hardware is unsupported on this platform");
+            break;
         default:
             break;
     }
@@ -206,12 +229,6 @@
     return CBUUIDString;
 }
 
-- (void)valuesUpdated:(NSArray *)values
-{
-    if ([self.delegate respondsToSelector:@selector(bleInterfaceManager:didUpdateDeviceValues:)]) {
-        // TODO -- Don't leave device values as nil.
-        [self.delegate bleInterfaceManager:self didUpdateDeviceValues:nil];
-    }
-}
+
 
 @end
