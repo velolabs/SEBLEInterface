@@ -28,9 +28,12 @@
 @property (nonatomic, weak) id<SEBLEInterfaceManagerDelegate>delegate;
 
 + (id)manager;
-- (void)addPeripheralWithUUID:(NSString *)UUID;
-- (void)removePeripheralWithUUID:(NSString *)UUID;
-- (BOOL)writeToDeviveWithUDID:(NSString *)UDID data:(u_int8_t)data;
+- (void)addPeripheralNamed:(NSString *)name;
+- (void)removePeripheralNamed:(NSString *)name;
+- (void)writeToPeripheralWithUDID:(NSString *)peripheralUUID
+                      serviceUUID:(NSString *)serviceUUID
+               characteristicUUID:(NSString *)characteristicUUID
+                             data:(NSData *)data;
 - (void)startScan;
 - (void)stopScan;
 
