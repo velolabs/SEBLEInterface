@@ -11,6 +11,8 @@
 		DC04277F1B2DBCC2008F3DDE /* SEBLEInterfaceManager.m in Sources */ = {isa = PBXBuildFile; fileRef = DC04277E1B2DBCC2008F3DDE /* SEBLEInterfaceManager.m */; };
 		DC0427861B2DC55E008F3DDE /* SEBLEInterfaceManager.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = DC04277D1B2DBCC2008F3DDE /* SEBLEInterfaceManager.h */; };
 		DC0427871B2DC566008F3DDE /* SENotifications.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = DC0427801B2DBD61008F3DDE /* SENotifications.h */; };
+		DCEDDE321B47484400E3A2EE /* SEBLEPeripheral.m in Sources */ = {isa = PBXBuildFile; fileRef = DCEDDE311B47484400E3A2EE /* SEBLEPeripheral.m */; };
+		DCEDDE391B475BE800E3A2EE /* SEBLEPeripheral.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = DCEDDE301B47484400E3A2EE /* SEBLEPeripheral.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -30,6 +32,7 @@
 			dstPath = "include/$(PRODUCT_NAME)";
 			dstSubfolderSpec = 16;
 			files = (
+				DCEDDE391B475BE800E3A2EE /* SEBLEPeripheral.h in CopyFiles */,
 				DC0427871B2DC566008F3DDE /* SENotifications.h in CopyFiles */,
 				DC0427861B2DC55E008F3DDE /* SEBLEInterfaceManager.h in CopyFiles */,
 			);
@@ -44,6 +47,8 @@
 		DC04277D1B2DBCC2008F3DDE /* SEBLEInterfaceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SEBLEInterfaceManager.h; sourceTree = "<group>"; };
 		DC04277E1B2DBCC2008F3DDE /* SEBLEInterfaceManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SEBLEInterfaceManager.m; sourceTree = "<group>"; };
 		DC0427801B2DBD61008F3DDE /* SENotifications.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SENotifications.h; sourceTree = "<group>"; };
+		DCEDDE301B47484400E3A2EE /* SEBLEPeripheral.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SEBLEPeripheral.h; sourceTree = "<group>"; };
+		DCEDDE311B47484400E3A2EE /* SEBLEPeripheral.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SEBLEPeripheral.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -86,6 +91,8 @@
 		DC0427651B2DBC4F008F3DDE /* SEBLEInterface */ = {
 			isa = PBXGroup;
 			children = (
+				DCEDDE301B47484400E3A2EE /* SEBLEPeripheral.h */,
+				DCEDDE311B47484400E3A2EE /* SEBLEPeripheral.m */,
 				DC04277D1B2DBCC2008F3DDE /* SEBLEInterfaceManager.h */,
 				DC04277E1B2DBCC2008F3DDE /* SEBLEInterfaceManager.m */,
 				DC0427801B2DBD61008F3DDE /* SENotifications.h */,
@@ -198,6 +205,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				DC04277F1B2DBCC2008F3DDE /* SEBLEInterfaceManager.m in Sources */,
+				DCEDDE321B47484400E3A2EE /* SEBLEPeripheral.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -366,6 +374,7 @@
 				DC0427791B2DBC4F008F3DDE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		DC04277A1B2DBC4F008F3DDE /* Build configuration list for PBXNativeTarget "SEBLEInterfaceTests" */ = {
 			isa = XCConfigurationList;
@@ -374,6 +383,7 @@
 				DC04277C1B2DBC4F008F3DDE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
