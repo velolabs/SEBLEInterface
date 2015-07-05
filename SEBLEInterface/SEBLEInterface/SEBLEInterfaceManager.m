@@ -100,15 +100,20 @@
     return blePeripheral;
 }
 
-- (void)writeToPeripheralWithUDID:(NSString *)peripheralUUID
+- (void)writeToPeripheralWithName:(NSString *)peripheralName
                       serviceUUID:(NSString *)serviceUUID
                characteristicUUID:(NSString *)characteristicUUID
                             data:(NSData *)data
 {
-    CBPeripheral *peripheral = self.connectedPeripherals[[self CBUUIDFromString:peripheralUUID]];
-    SEBLEPeripheral *blePeripheral = [self seblePeripheralForCBPeripheral:peripheral];
-    CBCharacteristic *characteristic = blePeripheral.services[peripheral.name][kSEBLEPeripheralService][[self CBUUIDFromString:characteristicUUID]];
-    [peripheral writeValue:data forCharacteristic:characteristic type:CBCharacteristicWriteWithResponse];
+    SEBLEPeripheral *blePeripheral = self.connectedPeripherals[peripheralName];
+    NSDictionary *characteristics = blePeripheral.services[serviceUUID][kSEBLEPeripheralCharacteristics];
+    CBCharacteristic *characteristic = characteristics[characteristicUUID];
+    u_int16_t a;
+    [data getBytes:&a length:sizeof(a)];
+    
+    [blePeripheral.peripheral writeValue:data
+                       forCharacteristic:characteristic
+                                    type:CBCharacteristicWriteWithResponse];
 }
 
 #pragma mark - CBPeripheral Delegate Methods
@@ -190,7 +195,7 @@ didDiscoverCharacteristicsForService:(CBService *)service
         for (CBCharacteristic *characteristic in service.characteristics) {
             NSLog(@"Discoverd characteristic with UUID: %@", characteristic.UUID);
             SEBLEPeripheral *blePeripheral = [self seblePeripheralForCBPeripheral:peripheral];
-            blePeripheral.services[service.UUID][kSEBLEPeripheralCharacteristics][characteristic.UUID] = characteristic;
+            [blePeripheral addCharacteristic:characteristic forService:service];
             [peripheral setNotifyValue:YES forCharacteristic:characteristic];
         }
     }
@@ -200,29 +205,32 @@ didDiscoverCharacteristicsForService:(CBService *)service
 didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic
              error:(NSError *)error
 {
-    NSData *data = characteristic.value;
-    const uint8_t *recievedData = data.bytes;
-    uint16_t value = 0;
-    NSMutableArray *numbers = [NSMutableArray new];
-    
-    for (int i=0; i < data.length; i++) {
-        //[numbers addObject:@(recievedData[i])];
-        uint8_t digit = recievedData[i];
-        value += [self value:digit forIndex:i];
-        if (i == data.length - 1 || i % 2 == 1) {
-            [numbers addObject:@(value)];
-            value = 0;
-        }
-    }
-    
-    [self valuesUpdated:numbers];
-    NSLog(@"there are %ld sensor values. they are: %@", (long)numbers.count, numbers);
+//    NSData *data = characteristic.value;
+//    const uint8_t *recievedData = data.bytes;
+//    uint16_t value = 0;
+//    NSMutableArray *numbers = [NSMutableArray new];
+//    
+//    for (int i=0; i < data.length; i++) {
+//        //[numbers addObject:@(recievedData[i])];
+//        uint8_t digit = recievedData[i];
+//        value += [self value:digit forIndex:i];
+//        if (i == data.length - 1 || i % 2 == 1) {
+//            [numbers addObject:@(value)];
+//            value = 0;
+//        }
+//    }
+//    
+//    [self valuesUpdated:numbers];
+//    NSLog(@"there are %ld sensor values. they are: %@", (long)numbers.count, numbers);
 }
 
 - (void)peripheral:(CBPeripheral *)peripheral didWriteValueForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error
 {
-    
+    if (error) {
+        NSLog(@"Error writing to characteristic: %@", error.localizedDescription);
+    }
 }
+
 - (void)centralManager:(CBCentralManager *)central didRetrievePeripherals:(NSArray *)peripherals
 {
     
@@ -266,7 +274,5 @@ didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic
     NSString *CBUUIDString = [NSString stringWithFormat:@"%@", cbUUID];
     return CBUUIDString;
 }
-
-
 
 @end

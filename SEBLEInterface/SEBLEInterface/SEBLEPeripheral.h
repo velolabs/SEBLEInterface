@@ -23,5 +23,7 @@
 
 + (id)withPeripheral:(CBPeripheral *)peripheral UUID:(CBUUID *)UUID;
 - (void)addService:(CBService *)service;
+- (NSString *)CBUUIDAsString;
+- (void)addCharacteristic:(CBCharacteristic *)characteristic forService:(CBService *)service;
 
 @end
