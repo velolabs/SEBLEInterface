@@ -29,11 +29,35 @@
 
 - (void)addService:(CBService *)service
 {
-    if (!self.services[service.UUID]) {
-        self.services[service.UUID] = @{kSEBLEPeripheralService:service,
-                                        kSEBLEPeripheralCharacteristics:[NSMutableDictionary new]
-                                        };
+    NSString *serviceUUID = [self CBUUIDAsString:service.UUID];
+    if (!self.services[serviceUUID]) {
+        self.services[serviceUUID] = @{kSEBLEPeripheralService:service,
+                                       kSEBLEPeripheralCharacteristics:[NSMutableDictionary new]
+                                       };
     }
 }
+
+- (void)addCharacteristic:(CBCharacteristic *)characteristic forService:(CBService *)service
+{
+    NSString *characteristicUUID = [self CBUUIDAsString:characteristic.UUID];
+    NSString *serviceUUID = [self CBUUIDAsString:service.UUID];
+    self.services[serviceUUID][kSEBLEPeripheralCharacteristics][characteristicUUID] = characteristic;
+}
+
+- (NSString *)CBUUIDAsString
+{
+    return [self CBUUIDAsString:self.UUID];
+}
+
+- (NSString *)CBUUIDAsString:(CBUUID *)UUID
+{
+    return [NSString stringWithFormat:@"%@", UUID];
+}
+
+- (CBUUID *)CBUUIDFromString:(NSString *)CBUUIDString
+{
+    return [CBUUID UUIDWithString:CBUUIDString];
+}
+
 @end
 

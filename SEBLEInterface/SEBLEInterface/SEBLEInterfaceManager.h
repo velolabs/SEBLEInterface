@@ -30,7 +30,7 @@
 + (id)manager;
 - (void)addPeripheralNamed:(NSString *)name;
 - (void)removePeripheralNamed:(NSString *)name;
-- (void)writeToPeripheralWithUDID:(NSString *)peripheralUUID
+- (void)writeToPeripheralWithName:(NSString *)peripheralName
                       serviceUUID:(NSString *)serviceUUID
                characteristicUUID:(NSString *)characteristicUUID
                              data:(NSData *)data;
