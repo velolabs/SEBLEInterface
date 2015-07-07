@@ -151,7 +151,7 @@
     
     if (advertisementData && advertisementData[kSEBLEInterfaceDataLocalName] && advertisementData[kSEBLEInterfaceDataServiceUUIDs]) {
         NSArray *UUIDs = advertisementData[kSEBLEInterfaceDataServiceUUIDs];
-        SEBLEPeripheral *blePeripheral = [SEBLEPeripheral withPeripheral:peripheral UUID:UUIDs[0]];
+        SEBLEPeripheral *blePeripheral = [SEBLEPeripheral withPeripheral:peripheral uuid:UUIDs[0]];
         if (!self.notConnectedPeripherals[peripheral.name]) {
             self.notConnectedPeripherals[peripheral.name] = blePeripheral;
             
@@ -262,17 +262,6 @@ didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic
     }
     
     return returnValue;
-}
-
-- (CBUUID *)CBUUIDFromString:(NSString *)CBUUIDString
-{
-    return [CBUUID UUIDWithString:CBUUIDString];
-}
-
-- (NSString *)stringFromCBUUID:(CBUUID *)cbUUID
-{
-    NSString *CBUUIDString = [NSString stringWithFormat:@"%@", cbUUID];
-    return CBUUIDString;
 }
 
 @end
