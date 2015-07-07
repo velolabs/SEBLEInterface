@@ -7,29 +7,30 @@
 //
 
 #import "SEBLEPeripheral.h"
+#import "NSString+BLE.h"
 
 @implementation SEBLEPeripheral
 
-- (id)initWithPeripheral:(CBPeripheral *)peripheral UUID:(CBUUID *)UUID
+- (id)initWithPeripheral:(CBPeripheral *)peripheral uuid:(CBUUID *)uuid
 {
     self = [super init];
     if (self) {
         _peripheral = peripheral;
         _services = [NSMutableDictionary new];
-        _UUID = UUID;
+        _uuid = uuid;
     }
     
     return  self;
 }
 
-+ (id)withPeripheral:(CBPeripheral *)peripheral UUID:(CBUUID *)UUID
++ (id)withPeripheral:(CBPeripheral *)peripheral uuid:(CBUUID *)uuid
 {
-    return [[self alloc] initWithPeripheral:peripheral UUID:UUID];
+    return [[self alloc] initWithPeripheral:peripheral uuid:uuid];
 }
 
 - (void)addService:(CBService *)service
 {
-    NSString *serviceUUID = [self CBUUIDAsString:service.UUID];
+    NSString *serviceUUID = [NSString stringWithCBUUID:service.UUID];
     if (!self.services[serviceUUID]) {
         self.services[serviceUUID] = @{kSEBLEPeripheralService:service,
                                        kSEBLEPeripheralCharacteristics:[NSMutableDictionary new]
@@ -39,24 +40,14 @@
 
 - (void)addCharacteristic:(CBCharacteristic *)characteristic forService:(CBService *)service
 {
-    NSString *characteristicUUID = [self CBUUIDAsString:characteristic.UUID];
-    NSString *serviceUUID = [self CBUUIDAsString:service.UUID];
+    NSString *characteristicUUID = [NSString stringWithCBUUID:characteristic.UUID];
+    NSString *serviceUUID = [NSString stringWithCBUUID:service.UUID];
     self.services[serviceUUID][kSEBLEPeripheralCharacteristics][characteristicUUID] = characteristic;
 }
 
 - (NSString *)CBUUIDAsString
 {
-    return [self CBUUIDAsString:self.UUID];
-}
-
-- (NSString *)CBUUIDAsString:(CBUUID *)UUID
-{
-    return [NSString stringWithFormat:@"%@", UUID];
-}
-
-- (CBUUID *)CBUUIDFromString:(NSString *)CBUUIDString
-{
-    return [CBUUID UUIDWithString:CBUUIDString];
+    return [NSString stringWithCBUUID:self.uuid];
 }
 
 @end

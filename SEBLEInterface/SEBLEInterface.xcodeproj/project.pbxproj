@@ -10,6 +10,7 @@
 		DC04276F1B2DBC4F008F3DDE /* libSEBLEInterface.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DC0427631B2DBC4F008F3DDE /* libSEBLEInterface.a */; };
 		DC04277F1B2DBCC2008F3DDE /* SEBLEInterfaceManager.m in Sources */ = {isa = PBXBuildFile; fileRef = DC04277E1B2DBCC2008F3DDE /* SEBLEInterfaceManager.m */; };
 		DC0427861B2DC55E008F3DDE /* SEBLEInterfaceManager.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = DC04277D1B2DBCC2008F3DDE /* SEBLEInterfaceManager.h */; };
+		DC0520BC1B4B9B7800FBAAB7 /* NSString+BLE.m in Sources */ = {isa = PBXBuildFile; fileRef = DC0520BB1B4B9B7800FBAAB7 /* NSString+BLE.m */; };
 		DCEDDE321B47484400E3A2EE /* SEBLEPeripheral.m in Sources */ = {isa = PBXBuildFile; fileRef = DCEDDE311B47484400E3A2EE /* SEBLEPeripheral.m */; };
 		DCEDDE391B475BE800E3A2EE /* SEBLEPeripheral.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = DCEDDE301B47484400E3A2EE /* SEBLEPeripheral.h */; };
 /* End PBXBuildFile section */
@@ -44,6 +45,8 @@
 		DC0427741B2DBC4F008F3DDE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DC04277D1B2DBCC2008F3DDE /* SEBLEInterfaceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SEBLEInterfaceManager.h; sourceTree = "<group>"; };
 		DC04277E1B2DBCC2008F3DDE /* SEBLEInterfaceManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SEBLEInterfaceManager.m; sourceTree = "<group>"; };
+		DC0520BA1B4B9B7800FBAAB7 /* NSString+BLE.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+BLE.h"; sourceTree = "<group>"; };
+		DC0520BB1B4B9B7800FBAAB7 /* NSString+BLE.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+BLE.m"; sourceTree = "<group>"; };
 		DCEDDE301B47484400E3A2EE /* SEBLEPeripheral.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SEBLEPeripheral.h; sourceTree = "<group>"; };
 		DCEDDE311B47484400E3A2EE /* SEBLEPeripheral.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SEBLEPeripheral.m; sourceTree = "<group>"; };
 		DCEDDE3E1B47892400E3A2EE /* SEBLENotifications.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SEBLENotifications.h; sourceTree = "<group>"; };
@@ -89,6 +92,8 @@
 		DC0427651B2DBC4F008F3DDE /* SEBLEInterface */ = {
 			isa = PBXGroup;
 			children = (
+				DC0520BA1B4B9B7800FBAAB7 /* NSString+BLE.h */,
+				DC0520BB1B4B9B7800FBAAB7 /* NSString+BLE.m */,
 				DCEDDE301B47484400E3A2EE /* SEBLEPeripheral.h */,
 				DCEDDE311B47484400E3A2EE /* SEBLEPeripheral.m */,
 				DC04277D1B2DBCC2008F3DDE /* SEBLEInterfaceManager.h */,
@@ -202,6 +207,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DC0520BC1B4B9B7800FBAAB7 /* NSString+BLE.m in Sources */,
 				DC04277F1B2DBCC2008F3DDE /* SEBLEInterfaceManager.m in Sources */,
 				DCEDDE321B47484400E3A2EE /* SEBLEPeripheral.m in Sources */,
 			);
