@@ -37,6 +37,7 @@
         _notConnectedPeripherals = [NSMutableDictionary new];
         _connectedPeripherals = [NSMutableDictionary new];
         _isPoweredOn = NO;
+        _shouldScan = YES;
     }
     
     return self;
@@ -61,7 +62,7 @@
 
 - (void)startScan
 {
-    if (self.isPoweredOn) {
+    if (self.isPoweredOn && self.shouldScan) {
         [self.centralManager scanForPeripheralsWithServices:nil options:nil];
     }
 }
@@ -178,6 +179,10 @@
         self.connectedPeripherals[peripheral.name] = blePeripheral;
         peripheral.delegate = self;
         [peripheral discoverServices:nil];
+        
+        if ([self.delegate respondsToSelector:@selector(bleInterfaceManager:connectedPeripheral:)]) {
+            [self.delegate bleInterfaceManager:self connectedPeripheral:blePeripheral];
+        }
     }
 }
 
