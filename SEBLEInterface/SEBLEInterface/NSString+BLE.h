@@ -13,6 +13,6 @@
 
 - (CBUUID *)CBUUID;
 
-+ (id)stringWithCBUUID:(CBUUID *)cbUUID;
++ (instancetype)stringWithCBUUID:(CBUUID *)cbUUID;
 
 @end

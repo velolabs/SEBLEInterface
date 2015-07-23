@@ -20,6 +20,7 @@
 - (void)bleInterfaceManager:(SEBLEInterfaceMangager *)interfaceManger discoveredPeripheral:(SEBLEPeripheral *)peripheral;
 - (void)bleInterfaceManager:(SEBLEInterfaceMangager *)interfaceManager connectPeripheral:(SEBLEPeripheral *)peripheral;
 - (void)bleInterfaceManager:(SEBLEInterfaceMangager *)interfaceManager removePeripheral:(SEBLEPeripheral *)peripheral;
+- (void)bleInterfaceManagerIsPoweredOn:(SEBLEInterfaceMangager *)interfaceManager;
 
 @end
 
@@ -36,7 +37,7 @@
                              data:(NSData *)data;
 - (void)startScan;
 - (void)stopScan;
-
+- (void)powerOn;
 // remove me...just for testing
 - (void)runTests;
 @end

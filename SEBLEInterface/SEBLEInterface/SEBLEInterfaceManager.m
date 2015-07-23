@@ -54,6 +54,11 @@
     return bleManager;
 }
 
+- (void)powerOn
+{
+    NSLog(@"SEBLEInterfaceManager turned on");
+}
+
 - (void)startScan
 {
     if (self.isPoweredOn) {
@@ -127,6 +132,9 @@
         case CBCentralManagerStatePoweredOn:
             NSLog(@"CoreBluetooth BLE hardware is powered on and ready");
             self.isPoweredOn = YES;
+            if ([self.delegate respondsToSelector:@selector(bleInterfaceManagerIsPoweredOn:)]) {
+                [self.delegate bleInterfaceManagerIsPoweredOn:self];
+            }
             break;
         case CBCentralManagerStateUnauthorized:
             NSLog(@"CoreBluetooth BLE state is unauthorized");

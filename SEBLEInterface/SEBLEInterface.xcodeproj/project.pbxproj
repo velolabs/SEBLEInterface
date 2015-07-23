@@ -11,6 +11,7 @@
 		DC04277F1B2DBCC2008F3DDE /* SEBLEInterfaceManager.m in Sources */ = {isa = PBXBuildFile; fileRef = DC04277E1B2DBCC2008F3DDE /* SEBLEInterfaceManager.m */; };
 		DC0427861B2DC55E008F3DDE /* SEBLEInterfaceManager.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = DC04277D1B2DBCC2008F3DDE /* SEBLEInterfaceManager.h */; };
 		DC0520BC1B4B9B7800FBAAB7 /* NSString+BLE.m in Sources */ = {isa = PBXBuildFile; fileRef = DC0520BB1B4B9B7800FBAAB7 /* NSString+BLE.m */; };
+		DC41C3FF1B60C02B001EA4CE /* NSString+BLE.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = DC0520BA1B4B9B7800FBAAB7 /* NSString+BLE.h */; };
 		DCEDDE321B47484400E3A2EE /* SEBLEPeripheral.m in Sources */ = {isa = PBXBuildFile; fileRef = DCEDDE311B47484400E3A2EE /* SEBLEPeripheral.m */; };
 		DCEDDE391B475BE800E3A2EE /* SEBLEPeripheral.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = DCEDDE301B47484400E3A2EE /* SEBLEPeripheral.h */; };
 /* End PBXBuildFile section */
@@ -32,6 +33,7 @@
 			dstPath = "include/$(PRODUCT_NAME)";
 			dstSubfolderSpec = 16;
 			files = (
+				DC41C3FF1B60C02B001EA4CE /* NSString+BLE.h in CopyFiles */,
 				DCEDDE391B475BE800E3A2EE /* SEBLEPeripheral.h in CopyFiles */,
 				DC0427861B2DC55E008F3DDE /* SEBLEInterfaceManager.h in CopyFiles */,
 			);

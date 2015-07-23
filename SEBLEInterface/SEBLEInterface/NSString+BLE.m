@@ -15,7 +15,7 @@
     return [CBUUID UUIDWithString:self];
 }
 
-+ (id)stringWithCBUUID:(CBUUID *)cbUUID
++ (instancetype)stringWithCBUUID:(CBUUID *)cbUUID
 {
     return [NSString stringWithFormat:@"%@", cbUUID];
 }

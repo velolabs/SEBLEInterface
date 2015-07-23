@@ -9,5 +9,5 @@
 #ifndef SEBLEInterface_SEBLENotifications_h
 #define SEBLEInterface_SEBLENotifications_h
 
-#define SEBLENotificationDidRecieve
+
 #endif
