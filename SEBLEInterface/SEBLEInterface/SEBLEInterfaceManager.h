@@ -27,7 +27,6 @@
 @interface SEBLEInterfaceMangager : NSObject<CBCentralManagerDelegate, CBPeripheralDelegate>
 
 @property (nonatomic, weak) id<SEBLEInterfaceManagerDelegate>delegate;
-@property (nonatomic, assign) BOOL shouldScan;
 
 + (id)manager;
 - (void)addPeripheralNamed:(NSString *)name;

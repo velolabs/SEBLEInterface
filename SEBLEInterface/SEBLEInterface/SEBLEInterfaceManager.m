@@ -26,7 +26,6 @@
 
 @end
 
-
 @implementation SEBLEInterfaceMangager
 
 - (id)init
@@ -37,7 +36,6 @@
         _notConnectedPeripherals = [NSMutableDictionary new];
         _connectedPeripherals = [NSMutableDictionary new];
         _isPoweredOn = NO;
-        _shouldScan = YES;
     }
     
     return self;
@@ -62,7 +60,7 @@
 
 - (void)startScan
 {
-    if (self.isPoweredOn && self.shouldScan) {
+    if (self.isPoweredOn) {
         [self.centralManager scanForPeripheralsWithServices:nil options:nil];
     }
 }
@@ -123,7 +121,6 @@
 }
 
 #pragma mark - CBPeripheral Delegate Methods
-
 - (void)centralManagerDidUpdateState:(CBCentralManager *)central
 {
     switch (central.state) {
@@ -218,6 +215,24 @@ didDiscoverCharacteristicsForService:(CBService *)service
 didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic
              error:(NSError *)error
 {
+    NSString *uuid = [NSString stringWithFormat:@"%@", characteristic.UUID];
+    
+    if ([uuid rangeOfString:@"5EC"].location == NSNotFound) {
+        if (error) {
+            NSLog(@"error reading from Peripheral %@ with characteristic %@ %@",
+                  peripheral.name,
+                  characteristic.UUID,
+                  error);
+            return;
+        }
+        
+        NSLog(@"updated value for Peripheral %@ with characteristic %@",
+              peripheral.name,
+              characteristic.UUID);
+    }
+    
+    
+    
 //    NSData *data = characteristic.value;
 //    const uint8_t *recievedData = data.bytes;
 //    uint16_t value = 0;
@@ -240,8 +255,16 @@ didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic
 - (void)peripheral:(CBPeripheral *)peripheral didWriteValueForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error
 {
     if (error) {
-        NSLog(@"Error writing to characteristic: %@", error.localizedDescription);
+        NSLog(@"error reading from Peripheral %@ with characteristic %@ %@",
+              peripheral.name,
+              characteristic.UUID,
+              error);
+        return;
     }
+    
+    NSLog(@"updated value for Peripheral %@ with characteristic %@",
+          peripheral.name,
+          characteristic.UUID);
 }
 
 - (void)centralManager:(CBCentralManager *)central didRetrievePeripherals:(NSArray *)peripherals
