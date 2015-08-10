@@ -22,6 +22,7 @@
 @property (nonatomic, strong) CBPeripheral *arduinoPeriphial;
 @property (nonatomic, strong) NSMutableDictionary *notConnectedPeripherals;
 @property (nonatomic, strong) NSMutableDictionary *connectedPeripherals;
+@property (nonatomic, strong) NSSet *charToRead;
 @property (nonatomic, assign) BOOL isPoweredOn;
 
 @end
@@ -32,10 +33,10 @@
 {
     self = [super init];
     if (self) {
-        _centralManager = [[CBCentralManager alloc] initWithDelegate:self queue:nil];
-        _notConnectedPeripherals = [NSMutableDictionary new];
-        _connectedPeripherals = [NSMutableDictionary new];
-        _isPoweredOn = NO;
+        _centralManager             = [[CBCentralManager alloc] initWithDelegate:self queue:nil];
+        _notConnectedPeripherals    = [NSMutableDictionary new];
+        _connectedPeripherals       = [NSMutableDictionary new];
+        _isPoweredOn                = NO;
     }
     
     return self;
@@ -70,12 +71,9 @@
     [self.centralManager stopScan];
 }
 
-- (void)valuesUpdated:(NSArray *)values
+- (void)setCharacteristicsToReadFrom:(NSSet *)characteristicsToRead
 {
-    if ([self.delegate respondsToSelector:@selector(bleInterfaceManager:didUpdateDeviceValues:)]) {
-        // TODO -- Don't leave device values as nil.
-        [self.delegate bleInterfaceManager:self didUpdateDeviceValues:nil];
-    }
+    self.charToRead = characteristicsToRead;
 }
 
 - (void)addPeripheralNamed:(NSString *)name
@@ -90,6 +88,11 @@
 - (void)removePeripheralNamed:(NSString *)name
 {
     
+}
+
+- (void)removeNotConnectPeripherals
+{
+    [self.notConnectedPeripherals removeAllObjects];
 }
 
 - (SEBLEPeripheral *)seblePeripheralForCBPeripheral:(CBPeripheral *)peripheral
@@ -170,6 +173,8 @@
 
 - (void)centralManager:(CBCentralManager *)central didConnectPeripheral:(CBPeripheral *)peripheral
 {
+    NSLog(@"connecting peripheral named :%@", peripheral.name);
+    
     if (self.notConnectedPeripherals[peripheral.name]) {
         SEBLEPeripheral *blePeripheral = self.notConnectedPeripherals[peripheral.name];
         [self.notConnectedPeripherals removeObjectForKey:peripheral.name];
@@ -186,7 +191,7 @@
 - (void)peripheral:(CBPeripheral *)peripheral didDiscoverServices:(NSError *)error
 {
     for (CBService *service in peripheral.services) {
-        NSLog(@"Discovered service: %@", service.UUID);
+        NSLog(@"Discovered service: %@ for peripheral: %@", service.UUID, peripheral.name);
         SEBLEPeripheral *blePeripheral = [self seblePeripheralForCBPeripheral:peripheral];
         if (blePeripheral) {
             [blePeripheral addService:service];
@@ -199,6 +204,7 @@
 didDiscoverCharacteristicsForService:(CBService *)service
              error:(NSError *)error
 {
+    
     if (error) {
         NSLog(@"error discovering characteristic for service: %@", error.localizedDescription);
     } else {
@@ -206,7 +212,9 @@ didDiscoverCharacteristicsForService:(CBService *)service
             NSLog(@"Discoverd characteristic with UUID: %@", characteristic.UUID);
             SEBLEPeripheral *blePeripheral = [self seblePeripheralForCBPeripheral:peripheral];
             [blePeripheral addCharacteristic:characteristic forService:service];
-            [peripheral setNotifyValue:YES forCharacteristic:characteristic];
+            NSString *uuid = [NSString stringWithFormat:@"%@", characteristic.UUID];
+            BOOL shouldNotify = [self.charToRead containsObject:uuid];
+            [peripheral setNotifyValue:shouldNotify forCharacteristic:characteristic];
         }
     }
 }
@@ -215,41 +223,29 @@ didDiscoverCharacteristicsForService:(CBService *)service
 didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic
              error:(NSError *)error
 {
-    NSString *uuid = [NSString stringWithFormat:@"%@", characteristic.UUID];
-    
-    if ([uuid rangeOfString:@"5EC"].location == NSNotFound) {
-        if (error) {
-            NSLog(@"error reading from Peripheral %@ with characteristic %@ %@",
-                  peripheral.name,
-                  characteristic.UUID,
-                  error);
-            return;
-        }
-        
-        NSLog(@"updated value for Peripheral %@ with characteristic %@",
+    if (error) {
+        NSLog(@"error reading from Peripheral %@ with characteristic %@ %@",
               peripheral.name,
-              characteristic.UUID);
+              characteristic.UUID,
+              error);
+        return;
     }
     
-    
-    
-//    NSData *data = characteristic.value;
-//    const uint8_t *recievedData = data.bytes;
-//    uint16_t value = 0;
-//    NSMutableArray *numbers = [NSMutableArray new];
-//    
-//    for (int i=0; i < data.length; i++) {
-//        //[numbers addObject:@(recievedData[i])];
-//        uint8_t digit = recievedData[i];
-//        value += [self value:digit forIndex:i];
-//        if (i == data.length - 1 || i % 2 == 1) {
-//            [numbers addObject:@(value)];
-//            value = 0;
-//        }
-//    }
-//    
-//    [self valuesUpdated:numbers];
-//    NSLog(@"there are %ld sensor values. they are: %@", (long)numbers.count, numbers);
+    NSString *uuid = [NSString stringWithFormat:@"%@", characteristic.UUID];
+    if ([self.charToRead containsObject:uuid]) {
+        NSLog(@"Valued updated for peripheral: %@ for characteristic uuid :%@ with number of bytes: %@",
+              peripheral.name,
+              uuid,
+              @(characteristic.value.length));
+        
+        if ([self.delegate respondsToSelector:@selector(bleInterfaceManager:updatedPeripheral:forCharacteristicUUID:withData:)]) {
+            SEBLEPeripheral *blePeripheral = [self seblePeripheralForCBPeripheral:peripheral];
+            [self.delegate bleInterfaceManager:self
+                             updatedPeripheral:blePeripheral
+                         forCharacteristicUUID:uuid
+                                      withData:characteristic.value];
+        }
+    }
 }
 
 - (void)peripheral:(CBPeripheral *)peripheral didWriteValueForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error
@@ -267,6 +263,11 @@ didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic
           characteristic.UUID);
 }
 
+- (void)peripheral:(CBPeripheral *)peripheral didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error
+{
+    
+}
+
 - (void)centralManager:(CBCentralManager *)central didRetrievePeripherals:(NSArray *)peripherals
 {
     
@@ -281,23 +282,6 @@ didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic
     }
     
     [self.centralManager scanForPeripheralsWithServices:nil options:nil];
-}
-
-- (uint16_t)value:(uint8_t)value forIndex:(int)index
-{
-    uint16_t returnValue = 0;
-    switch (index % 2) {
-        case 0:
-            returnValue = 256*value;
-            break;
-        case 1:
-            returnValue = value;
-            break;
-        default:
-            break;
-    }
-    
-    return returnValue;
 }
 
 @end

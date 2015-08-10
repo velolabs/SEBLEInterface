@@ -16,10 +16,20 @@
 
 @protocol SEBLEInterfaceManagerDelegate <NSObject>
 
-- (void)bleInterfaceManager:(SEBLEInterfaceMangager *)interfaceManager didUpdateDeviceValues:(NSDictionary *)values;
-- (void)bleInterfaceManager:(SEBLEInterfaceMangager *)interfaceManger discoveredPeripheral:(SEBLEPeripheral *)peripheral;
-- (void)bleInterfaceManager:(SEBLEInterfaceMangager *)interfaceManager connectedPeripheral:(SEBLEPeripheral *)peripheral;
-- (void)bleInterfaceManager:(SEBLEInterfaceMangager *)interfaceManager removePeripheral:(SEBLEPeripheral *)peripheral;
+- (void)bleInterfaceManager:(SEBLEInterfaceMangager *)interfaceManager
+          updatedPeripheral:(SEBLEPeripheral *)peripheral
+      forCharacteristicUUID:(NSString *)characteristicUUID
+                   withData:(NSData *)data;
+
+- (void)bleInterfaceManager:(SEBLEInterfaceMangager *)interfaceManger
+       discoveredPeripheral:(SEBLEPeripheral *)peripheral;
+
+- (void)bleInterfaceManager:(SEBLEInterfaceMangager *)interfaceManager
+        connectedPeripheral:(SEBLEPeripheral *)peripheral;
+
+- (void)bleInterfaceManager:(SEBLEInterfaceMangager *)interfaceManager
+           removePeripheral:(SEBLEPeripheral *)peripheral;
+
 - (void)bleInterfaceManagerIsPoweredOn:(SEBLEInterfaceMangager *)interfaceManager;
 
 @end
@@ -38,6 +48,9 @@
 - (void)startScan;
 - (void)stopScan;
 - (void)powerOn;
+- (void)removeNotConnectPeripherals;
+- (void)setCharacteristicsToReadFrom:(NSSet *)characteristicsToRead;
+
 // remove me...just for testing
 - (void)runTests;
 @end
