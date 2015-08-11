@@ -19,10 +19,12 @@
 @interface SEBLEInterfaceMangager()
 
 @property (nonatomic, strong) CBCentralManager *centralManager;
-@property (nonatomic, strong) CBPeripheral *arduinoPeriphial;
 @property (nonatomic, strong) NSMutableDictionary *notConnectedPeripherals;
 @property (nonatomic, strong) NSMutableDictionary *connectedPeripherals;
+@property (nonatomic, strong) NSArray *connectToNames;
 @property (nonatomic, strong) NSSet *charToRead;
+@property (nonatomic, strong) NSSet *servicesToRead;
+@property (nonatomic, strong) NSSet *charToNotifiy;
 @property (nonatomic, assign) BOOL isPoweredOn;
 
 @end
@@ -71,9 +73,24 @@
     [self.centralManager stopScan];
 }
 
+- (void)setDeviceNamesToConnectTo:(NSArray *)namesToConnect
+{
+    self.connectToNames = namesToConnect;
+}
+
+- (void)setServiceToReadFrom:(NSSet *)serviceNames
+{
+    self.servicesToRead = serviceNames;
+}
+
 - (void)setCharacteristicsToReadFrom:(NSSet *)characteristicsToRead
 {
     self.charToRead = characteristicsToRead;
+}
+
+- (void)setCharacteristicsToReceiveNotificationsFrom:(NSSet *)notificationsToRecieve
+{
+    self.charToNotifiy = notificationsToRecieve;
 }
 
 - (void)addPeripheralNamed:(NSString *)name
@@ -83,6 +100,27 @@
         SEBLEPeripheral *blePeripheral = self.notConnectedPeripherals[name];
         [self.centralManager connectPeripheral:blePeripheral.peripheral options:nil];
     }
+}
+
+- (BOOL)shouldConnectToDeviceNamed:(NSString *)name
+{
+    BOOL shouldConnect = NO;
+    for (NSString *approvedName in self.connectToNames) {
+        if ([name.lowercaseString rangeOfString:approvedName.lowercaseString].location != NSNotFound) {
+            shouldConnect = YES;
+            break;
+        }
+    }
+    
+    return shouldConnect;
+}
+
+- (BOOL)shouldConnectToDeviceWithAdvertisementData:(NSDictionary *)advertisementData
+{
+    return advertisementData &&
+    advertisementData[kSEBLEInterfaceDataLocalName] &&
+    advertisementData[kSEBLEInterfaceDataServiceUUIDs] &&
+    [self shouldConnectToDeviceNamed:advertisementData[kSEBLEInterfaceDataLocalName]];
 }
 
 - (void)removePeripheralNamed:(NSString *)name
@@ -123,6 +161,17 @@
                                     type:CBCharacteristicWriteWithResponse];
 }
 
+- (void)readValueForPeripheralNamed:(NSString *)peripheralName
+                     forServiceUUID:(NSString *)serviceUUID
+              andCharacteristicUUID:(NSString *)characteristicUUID
+{
+    SEBLEPeripheral *blePeripheral = self.connectedPeripherals[peripheralName];
+    NSDictionary *characteristics = blePeripheral.services[serviceUUID][kSEBLEPeripheralCharacteristics];
+    CBCharacteristic *characteristic = characteristics[characteristicUUID];
+
+    [blePeripheral.peripheral readValueForCharacteristic:characteristic];
+}
+
 #pragma mark - CBPeripheral Delegate Methods
 - (void)centralManagerDidUpdateState:(CBCentralManager *)central
 {
@@ -158,7 +207,7 @@
 {
     NSLog(@"found periphial named: %@ with advertistment data: %@", peripheral.name, advertisementData.description);
     
-    if (advertisementData && advertisementData[kSEBLEInterfaceDataLocalName] && advertisementData[kSEBLEInterfaceDataServiceUUIDs]) {
+    if ([self shouldConnectToDeviceWithAdvertisementData:advertisementData]) {
         NSArray *UUIDs = advertisementData[kSEBLEInterfaceDataServiceUUIDs];
         SEBLEPeripheral *blePeripheral = [SEBLEPeripheral withPeripheral:peripheral uuid:UUIDs[0]];
         if (!self.notConnectedPeripherals[peripheral.name]) {
@@ -173,7 +222,7 @@
 
 - (void)centralManager:(CBCentralManager *)central didConnectPeripheral:(CBPeripheral *)peripheral
 {
-    NSLog(@"connecting peripheral named :%@", peripheral.name);
+    NSLog(@"connected peripheral named :%@", peripheral.name);
     
     if (self.notConnectedPeripherals[peripheral.name]) {
         SEBLEPeripheral *blePeripheral = self.notConnectedPeripherals[peripheral.name];
@@ -191,12 +240,16 @@
 - (void)peripheral:(CBPeripheral *)peripheral didDiscoverServices:(NSError *)error
 {
     for (CBService *service in peripheral.services) {
-        NSLog(@"Discovered service: %@ for peripheral: %@", service.UUID, peripheral.name);
-        SEBLEPeripheral *blePeripheral = [self seblePeripheralForCBPeripheral:peripheral];
-        if (blePeripheral) {
-            [blePeripheral addService:service];
+        NSString *serviceUUID = [NSString stringWithFormat:@"%@", service.UUID];
+        if ([self.servicesToRead containsObject:serviceUUID]) {
+            NSLog(@"Subscribing to service: %@ for peripheral: %@", service.UUID, peripheral.name);
+            SEBLEPeripheral *blePeripheral = [self seblePeripheralForCBPeripheral:peripheral];
+            if (blePeripheral) {
+                [blePeripheral addService:service];
+            }
+            
+            [peripheral discoverCharacteristics:nil forService:service];
         }
-        [peripheral discoverCharacteristics:nil forService:service];
     }
 }
 
@@ -204,17 +257,20 @@
 didDiscoverCharacteristicsForService:(CBService *)service
              error:(NSError *)error
 {
-    
     if (error) {
         NSLog(@"error discovering characteristic for service: %@", error.localizedDescription);
     } else {
         for (CBCharacteristic *characteristic in service.characteristics) {
-            NSLog(@"Discoverd characteristic with UUID: %@", characteristic.UUID);
-            SEBLEPeripheral *blePeripheral = [self seblePeripheralForCBPeripheral:peripheral];
-            [blePeripheral addCharacteristic:characteristic forService:service];
-            NSString *uuid = [NSString stringWithFormat:@"%@", characteristic.UUID];
-            BOOL shouldNotify = [self.charToRead containsObject:uuid];
-            [peripheral setNotifyValue:shouldNotify forCharacteristic:characteristic];
+            NSString *charUUID = [NSString stringWithFormat:@"%@", characteristic.UUID];
+            if ([self.charToRead containsObject:charUUID]) {
+                NSLog(@"Discoverd characteristic with UUID: %@", charUUID);
+                SEBLEPeripheral *blePeripheral = [self seblePeripheralForCBPeripheral:peripheral];
+                [blePeripheral addCharacteristic:characteristic forService:service];
+                NSString *uuid = [NSString stringWithFormat:@"%@", characteristic.UUID];
+                if ([self.charToNotifiy containsObject:uuid]) {
+                    [peripheral setNotifyValue:YES forCharacteristic:characteristic];
+                }
+            }
         }
     }
 }
@@ -265,7 +321,16 @@ didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic
 
 - (void)peripheral:(CBPeripheral *)peripheral didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error
 {
-    
+    if (error) {
+        NSLog(@"Error: failed to update notification state for: %@ for characteristic: %@",
+              peripheral.name,
+              [NSString stringWithFormat:@"%@", characteristic.UUID]);
+        return;
+    }
+   
+    NSLog(@"Updating notification state for: %@ for characteristic: %@",
+          peripheral.name,
+          [NSString stringWithFormat:@"%@", characteristic.UUID]);
 }
 
 - (void)centralManager:(CBCentralManager *)central didRetrievePeripherals:(NSArray *)peripherals
@@ -277,11 +342,26 @@ didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic
     didDisconnectPeripheral:(CBPeripheral *)peripheral
                  error:(NSError *)error
 {
-    if (peripheral == self.arduinoPeriphial) {
-        self.arduinoPeriphial = nil;
+    if (error) {
+        NSLog(@"Error: disconnecting from periphreal: %@, with error: %@",
+              peripheral.name,
+              error);
     }
     
-    [self.centralManager scanForPeripheralsWithServices:nil options:nil];
+    SEBLEPeripheral *blePeripheral = [self seblePeripheralForCBPeripheral:peripheral];
+    
+    if (self.connectedPeripherals[peripheral.name]) {
+        [self.connectedPeripherals removeObjectForKey:peripheral.name];
+    }
+    
+    if (self.notConnectedPeripherals[peripheral.name]) {
+        [self.notConnectedPeripherals removeObjectForKey:peripheral.name];
+    }
+    
+    if ([self.delegate respondsToSelector:@selector(bleInterfaceManager:disconnectedPeripheral:)]) {
+        [self.delegate bleInterfaceManager:self disconnectedPeripheral:blePeripheral];
+    }
 }
+
 
 @end
