@@ -21,7 +21,9 @@
 @property (nonatomic, strong) CBCentralManager *centralManager;
 @property (nonatomic, strong) NSMutableDictionary *notConnectedPeripherals;
 @property (nonatomic, strong) NSMutableDictionary *connectedPeripherals;
-@property (nonatomic, strong) NSArray *connectToNames;
+@property (nonatomic, strong) NSSet *namesToConnectAutomatically;
+@property (nonatomic, strong) NSSet *connectToNames;
+@property (nonatomic, strong) NSArray *fragmentsToConnect;
 @property (nonatomic, strong) NSSet *charToRead;
 @property (nonatomic, strong) NSSet *servicesToRead;
 @property (nonatomic, strong) NSSet *charToNotifiy;
@@ -35,10 +37,10 @@
 {
     self = [super init];
     if (self) {
-        _centralManager             = [[CBCentralManager alloc] initWithDelegate:self queue:nil];
-        _notConnectedPeripherals    = [NSMutableDictionary new];
-        _connectedPeripherals       = [NSMutableDictionary new];
-        _isPoweredOn                = NO;
+        _centralManager                 = [[CBCentralManager alloc] initWithDelegate:self queue:nil];
+        _notConnectedPeripherals        = [NSMutableDictionary new];
+        _connectedPeripherals           = [NSMutableDictionary new];
+        _isPoweredOn                    = NO;
     }
     
     return self;
@@ -73,11 +75,6 @@
     [self.centralManager stopScan];
 }
 
-- (void)setDeviceNamesToConnectTo:(NSArray *)namesToConnect
-{
-    self.connectToNames = namesToConnect;
-}
-
 - (void)setServiceToReadFrom:(NSSet *)serviceNames
 {
     self.servicesToRead = serviceNames;
@@ -104,18 +101,16 @@
 
 - (BOOL)shouldConnectToDeviceNamed:(NSString *)name
 {
-    BOOL shouldConnect = NO;
-    for (NSString *approvedName in self.connectToNames) {
-        if ([name.lowercaseString rangeOfString:approvedName.lowercaseString].location != NSNotFound) {
-            shouldConnect = YES;
-            break;
+    for (NSString *fragment in self.fragmentsToConnect) {
+        if ([name.lowercaseString rangeOfString:fragment.lowercaseString].location != NSNotFound) {
+            return YES;
         }
     }
     
-    return shouldConnect;
+    return NO;
 }
 
-- (BOOL)shouldConnectToDeviceWithAdvertisementData:(NSDictionary *)advertisementData
+- (BOOL)shouldShowDeviceWithAdvertisementData:(NSDictionary *)advertisementData
 {
     return advertisementData &&
     advertisementData[kSEBLEInterfaceDataLocalName] &&
@@ -125,12 +120,24 @@
 
 - (void)removePeripheralNamed:(NSString *)name
 {
-    
+    if (self.connectedPeripherals[name]) {
+        [self.connectedPeripherals removeObjectForKey:name];
+    }
 }
 
 - (void)removeNotConnectPeripherals
 {
     [self.notConnectedPeripherals removeAllObjects];
+}
+
+- (void)setDeviceNamesToConnectTo:(NSSet *)namesToConnect
+{
+    self.namesToConnectAutomatically = namesToConnect;
+}
+
+- (void)setDeviceNameFragmentsToConnect:(NSArray *)fragmentsToConnect
+{
+    self.fragmentsToConnect = fragmentsToConnect;
 }
 
 - (SEBLEPeripheral *)seblePeripheralForCBPeripheral:(CBPeripheral *)peripheral
@@ -153,8 +160,8 @@
     SEBLEPeripheral *blePeripheral = self.connectedPeripherals[peripheralName];
     NSDictionary *characteristics = blePeripheral.services[serviceUUID][kSEBLEPeripheralCharacteristics];
     CBCharacteristic *characteristic = characteristics[characteristicUUID];
-    u_int16_t a;
-    [data getBytes:&a length:sizeof(a)];
+    u_int16_t input;
+    [data getBytes:&input length:sizeof(input)];
     
     [blePeripheral.peripheral writeValue:data
                        forCharacteristic:characteristic
@@ -205,17 +212,19 @@
      advertisementData:(NSDictionary *)advertisementData
                   RSSI:(NSNumber *)RSSI
 {
-    NSLog(@"found periphial named: %@ with advertistment data: %@", peripheral.name, advertisementData.description);
+    NSLog(@"found periphial named: %@ with advertistment data: %@",
+          peripheral.name,
+          advertisementData.description);
     
-    if ([self shouldConnectToDeviceWithAdvertisementData:advertisementData]) {
+    if ([self shouldShowDeviceWithAdvertisementData:advertisementData]) {
         NSArray *UUIDs = advertisementData[kSEBLEInterfaceDataServiceUUIDs];
         SEBLEPeripheral *blePeripheral = [SEBLEPeripheral withPeripheral:peripheral uuid:UUIDs[0]];
         if (!self.notConnectedPeripherals[peripheral.name]) {
             self.notConnectedPeripherals[peripheral.name] = blePeripheral;
-            
-            if ([self.delegate respondsToSelector:@selector(bleInterfaceManager:discoveredPeripheral:)]) {
-                [self.delegate bleInterfaceManager:self discoveredPeripheral:blePeripheral];
-            }
+        }
+        
+        if ([self.delegate respondsToSelector:@selector(bleInterfaceManager:discoveredPeripheral:)]) {
+            [self.delegate bleInterfaceManager:self discoveredPeripheral:blePeripheral];
         }
     }
 }
@@ -362,6 +371,5 @@ didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic
         [self.delegate bleInterfaceManager:self disconnectedPeripheral:blePeripheral];
     }
 }
-
 
 @end
