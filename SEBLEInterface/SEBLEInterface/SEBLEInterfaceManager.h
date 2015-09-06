@@ -49,14 +49,14 @@
 - (void)stopScan;
 - (void)powerOn;
 - (void)removeNotConnectPeripherals;
-- (void)setDeviceNamesToConnectTo:(NSArray *)namesToConnect;
+- (void)setDeviceNamesToConnectTo:(NSSet *)namesToConnect;
+- (void)setDeviceNameFragmentsToConnect:(NSArray *)fragmentsToConnect;
 - (void)setServiceToReadFrom:(NSSet *)serviceNames;
 - (void)setCharacteristicsToReadFrom:(NSSet *)characteristicsToRead;
 - (void)setCharacteristicsToReceiveNotificationsFrom:(NSSet *)notificationsToRecieve;
 - (void)readValueForPeripheralNamed:(NSString *)peripheralName
                      forServiceUUID:(NSString *)serviceUUID
               andCharacteristicUUID:(NSString *)characteristicUUID;
-
 // remove me...just for testing
 - (void)runTests;
 @end
