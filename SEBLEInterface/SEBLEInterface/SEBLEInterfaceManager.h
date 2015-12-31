@@ -32,13 +32,17 @@
 
 - (void)bleInterfaceManagerIsPoweredOn:(SEBLEInterfaceMangager *)interfaceManager;
 
+- (void)bleInterfaceManager:(SEBLEInterfaceMangager *)interfaceManager
+                 peripheral:(SEBLEPeripheral *)peripheral
+changedUpdateStateForCharacteristic:(NSString *)characteristicUUID;
+
 @end
 
 @interface SEBLEInterfaceMangager : NSObject<CBCentralManagerDelegate, CBPeripheralDelegate>
 
 @property (nonatomic, weak) id<SEBLEInterfaceManagerDelegate>delegate;
 
-+ (id)manager;
++ (id)sharedManager;
 - (void)addPeripheralNamed:(NSString *)name;
 - (void)removePeripheralNamed:(NSString *)name;
 - (void)writeToPeripheralWithName:(NSString *)peripheralName
@@ -54,6 +58,7 @@
 - (void)setServiceToReadFrom:(NSSet *)serviceNames;
 - (void)setCharacteristicsToReadFrom:(NSSet *)characteristicsToRead;
 - (void)setCharacteristicsToReceiveNotificationsFrom:(NSSet *)notificationsToRecieve;
+- (void)setServicesToNotifyWhenTheyAreDiscoverd:(NSSet *)servicesToNotify;
 - (void)readValueForPeripheralNamed:(NSString *)peripheralName
                      forServiceUUID:(NSString *)serviceUUID
               andCharacteristicUUID:(NSString *)characteristicUUID;
