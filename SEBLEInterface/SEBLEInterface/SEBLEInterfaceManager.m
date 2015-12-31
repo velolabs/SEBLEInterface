@@ -27,6 +27,7 @@
 @property (nonatomic, strong) NSSet *charToRead;
 @property (nonatomic, strong) NSSet *servicesToRead;
 @property (nonatomic, strong) NSSet *charToNotifiy;
+@property (nonatomic, strong) NSSet *servicesToNotifyWhenDiscoverd;
 @property (nonatomic, assign) BOOL isPoweredOn;
 
 @end
@@ -46,7 +47,7 @@
     return self;
 }
 
-+ (id)manager
++ (id)sharedManager
 {
     NSLog(@"%@ %@", NSStringFromClass([self class]), NSStringFromSelector(_cmd));
     static SEBLEInterfaceMangager *bleManager = nil;
@@ -88,6 +89,11 @@
 - (void)setCharacteristicsToReceiveNotificationsFrom:(NSSet *)notificationsToRecieve
 {
     self.charToNotifiy = notificationsToRecieve;
+}
+
+- (void)setServicesToNotifyWhenTheyAreDiscoverd:(NSSet *)servicesToNotify
+{
+    self.servicesToNotifyWhenDiscoverd = servicesToNotify;
 }
 
 - (void)addPeripheralNamed:(NSString *)name
@@ -238,7 +244,6 @@
         [self.notConnectedPeripherals removeObjectForKey:peripheral.name];
         self.connectedPeripherals[peripheral.name] = blePeripheral;
         peripheral.delegate = self;
-        [peripheral discoverServices:nil];
         
         if ([self.delegate respondsToSelector:@selector(bleInterfaceManager:connectedPeripheral:)]) {
             [self.delegate bleInterfaceManager:self connectedPeripheral:blePeripheral];
@@ -268,17 +273,19 @@ didDiscoverCharacteristicsForService:(CBService *)service
 {
     if (error) {
         NSLog(@"error discovering characteristic for service: %@", error.localizedDescription);
-    } else {
-        for (CBCharacteristic *characteristic in service.characteristics) {
-            NSString *charUUID = [NSString stringWithFormat:@"%@", characteristic.UUID];
-            if ([self.charToRead containsObject:charUUID]) {
-                NSLog(@"Discoverd characteristic with UUID: %@", charUUID);
-                SEBLEPeripheral *blePeripheral = [self seblePeripheralForCBPeripheral:peripheral];
-                [blePeripheral addCharacteristic:characteristic forService:service];
-                NSString *uuid = [NSString stringWithFormat:@"%@", characteristic.UUID];
-                if ([self.charToNotifiy containsObject:uuid]) {
-                    [peripheral setNotifyValue:YES forCharacteristic:characteristic];
-                }
+        // TODO add a resposne to calling object...maybe a completion block
+        return;
+    }
+    
+    SEBLEPeripheral *blePeripheral = [self seblePeripheralForCBPeripheral:peripheral];
+    for (CBCharacteristic *characteristic in service.characteristics) {
+        NSString *charUUID = [NSString stringWithFormat:@"%@", characteristic.UUID];
+        if ([self.charToRead containsObject:charUUID]) {
+            NSLog(@"Discoverd characteristic with UUID: %@", charUUID);
+            [blePeripheral addCharacteristic:characteristic forService:service];
+            NSString *uuid = [NSString stringWithFormat:@"%@", characteristic.UUID];
+            if ([self.charToNotifiy containsObject:uuid]) {
+                [peripheral setNotifyValue:YES forCharacteristic:characteristic];
             }
         }
     }
@@ -313,7 +320,9 @@ didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic
     }
 }
 
-- (void)peripheral:(CBPeripheral *)peripheral didWriteValueForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error
+- (void)peripheral:(CBPeripheral *)peripheral
+didWriteValueForCharacteristic:(CBCharacteristic *)characteristic
+             error:(NSError *)error
 {
     if (error) {
         NSLog(@"error reading from Peripheral %@ with characteristic %@ %@",
@@ -328,18 +337,28 @@ didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic
           characteristic.UUID);
 }
 
-- (void)peripheral:(CBPeripheral *)peripheral didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error
+- (void)peripheral:(CBPeripheral *)peripheral
+didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
+             error:(NSError *)error
 {
-    if (error) {
-        NSLog(@"Error: failed to update notification state for: %@ for characteristic: %@",
+    if (error && error.code != 15) {
+        NSLog(@"Error: failed to update notification state for: %@ for characteristic: %@ with error: %@",
+              peripheral.name,
+              [NSString stringWithFormat:@"%@", characteristic.UUID],
+              error.localizedDescription);
+    } else if (error && error.code == 15) {
+        NSLog(@"Handling error: %@. Retrying setting the notifciation state.", error.localizedDescription);
+        [peripheral setNotifyValue:YES forCharacteristic:characteristic];
+    } else {
+        NSLog(@"Updating notification state for: %@ for characteristic: %@",
               peripheral.name,
               [NSString stringWithFormat:@"%@", characteristic.UUID]);
-        return;
+        if ([self.delegate respondsToSelector:@selector(bleInterfaceManager:peripheral:changedUpdateStateForCharacteristic:)]) {
+            NSString *uuid = [NSString stringWithFormat:@"%@", characteristic.UUID];
+            SEBLEPeripheral *blePeripheral = [self seblePeripheralForCBPeripheral:peripheral];
+            [self.delegate bleInterfaceManager:self peripheral:blePeripheral changedUpdateStateForCharacteristic:uuid];
+        }
     }
-   
-    NSLog(@"Updating notification state for: %@ for characteristic: %@",
-          peripheral.name,
-          [NSString stringWithFormat:@"%@", characteristic.UUID]);
 }
 
 - (void)centralManager:(CBCentralManager *)central didRetrievePeripherals:(NSArray *)peripherals
