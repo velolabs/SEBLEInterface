@@ -116,7 +116,7 @@
     return NO;
 }
 
-- (BOOL)shouldShowDeviceWithAdvertisementData:(NSDictionary *)advertisementData
+- (BOOL)shouldDiscoverDeviceWithAdvertisementData:(NSDictionary *)advertisementData
 {
     return advertisementData &&
     advertisementData[kSEBLEInterfaceDataLocalName] &&
@@ -222,7 +222,7 @@
           peripheral.name,
           advertisementData.description);
     
-    if ([self shouldShowDeviceWithAdvertisementData:advertisementData]) {
+    if ([self shouldDiscoverDeviceWithAdvertisementData:advertisementData]) {
         NSArray *UUIDs = advertisementData[kSEBLEInterfaceDataServiceUUIDs];
         SEBLEPeripheral *blePeripheral = [SEBLEPeripheral withPeripheral:peripheral uuid:UUIDs[0]];
         if (!self.notConnectedPeripherals[peripheral.name]) {
