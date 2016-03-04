@@ -62,6 +62,22 @@ changedUpdateStateForCharacteristic:(NSString *)characteristicUUID;
 - (void)readValueForPeripheralNamed:(NSString *)peripheralName
                      forServiceUUID:(NSString *)serviceUUID
               andCharacteristicUUID:(NSString *)characteristicUUID;
+- (void)updateConnectPeripheralKey:(NSString *)oldKey newKey:(NSString *)newKey;
+
+/*
+ * not connected peripheral methods
+ */
+- (void)setNotConnectedPeripheral:(SEBLEPeripheral *)seblePeripheral forKey:(NSString *)key;
+- (void)removeNotConnectPeripheralForKey:(NSString *)key;
+- (BOOL)notConnectPeripheralsHasPeripheralForKey:(NSString *)key;
+
+/*
+ * connect peripheral methods
+ */
+- (void)setConnectedPeripheral:(SEBLEPeripheral *)seblePeripheral forKey:(NSString *)key;
+- (void)removeConnectPeripheralForKey:(NSString *)key;
+- (BOOL)connectPeripheralsHasPeripheralForKey:(NSString *)key;
 // remove me...just for testing
 - (void)runTests;
+
 @end

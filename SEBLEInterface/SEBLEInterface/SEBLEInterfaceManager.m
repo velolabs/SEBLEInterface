@@ -185,6 +185,49 @@
     [blePeripheral.peripheral readValueForCharacteristic:characteristic];
 }
 
+- (void)updateConnectPeripheralKey:(NSString *)oldKey newKey:(NSString *)newKey
+{
+    SEBLEPeripheral *peripheral = self.connectedPeripherals[oldKey];
+    if (peripheral) {
+        [self.connectedPeripherals removeObjectForKey:oldKey];
+        self.connectedPeripherals[newKey] = peripheral;
+    }
+}
+
+- (void)setNotConnectedPeripheral:(SEBLEPeripheral *)seblePeripheral forKey:(NSString *)key
+{
+    self.notConnectedPeripherals[key] = seblePeripheral;
+}
+
+- (void)removeNotConnectPeripheralForKey:(NSString *)key
+{
+    if (self.notConnectedPeripherals[key]) {
+        [self.notConnectedPeripherals removeObjectForKey:key];
+    }
+}
+
+- (BOOL)notConnectPeripheralsHasPeripheralForKey:(NSString *)key
+{
+    return !!self.notConnectedPeripherals[key];
+}
+
+- (void)setConnectedPeripheral:(SEBLEPeripheral *)seblePeripheral forKey:(NSString *)key
+{
+    self.connectedPeripherals[key] = seblePeripheral;
+}
+
+- (void)removeConnectPeripheralForKey:(NSString *)key
+{
+    if (self.connectedPeripherals[key]) {
+        [self.connectedPeripherals removeObjectForKey:key];
+    }
+}
+
+- (BOOL)connectPeripheralsHasPeripheralForKey:(NSString *)key
+{
+    return !!self.connectedPeripherals[key];
+}
+
 #pragma mark - CBPeripheral Delegate Methods
 - (void)centralManagerDidUpdateState:(CBCentralManager *)central
 {
@@ -225,9 +268,9 @@
     if ([self shouldDiscoverDeviceWithAdvertisementData:advertisementData]) {
         NSArray *UUIDs = advertisementData[kSEBLEInterfaceDataServiceUUIDs];
         SEBLEPeripheral *blePeripheral = [SEBLEPeripheral withPeripheral:peripheral uuid:UUIDs[0]];
-        if (!self.notConnectedPeripherals[peripheral.name]) {
-            self.notConnectedPeripherals[peripheral.name] = blePeripheral;
-        }
+//        if (!self.notConnectedPeripherals[peripheral.name]) {
+//            self.notConnectedPeripherals[peripheral.name] = blePeripheral;
+//        }
         
         if ([self.delegate respondsToSelector:@selector(bleInterfaceManager:discoveredPeripheral:)]) {
             [self.delegate bleInterfaceManager:self discoveredPeripheral:blePeripheral];
@@ -241,9 +284,10 @@
     
     if (self.notConnectedPeripherals[peripheral.name]) {
         SEBLEPeripheral *blePeripheral = self.notConnectedPeripherals[peripheral.name];
-        [self.notConnectedPeripherals removeObjectForKey:peripheral.name];
-        self.connectedPeripherals[peripheral.name] = blePeripheral;
         peripheral.delegate = self;
+
+//        [self.notConnectedPeripherals removeObjectForKey:peripheral.name];
+//        self.connectedPeripherals[peripheral.name] = blePeripheral;
         
         if ([self.delegate respondsToSelector:@selector(bleInterfaceManager:connectedPeripheral:)]) {
             [self.delegate bleInterfaceManager:self connectedPeripheral:blePeripheral];
