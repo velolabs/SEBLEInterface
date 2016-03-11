@@ -19,9 +19,15 @@
 @property (nonatomic, strong) CBPeripheral *peripheral;
 @property (nonatomic, copy) NSMutableDictionary *services;
 @property (nonatomic, strong) CBUUID *uuid;
+@property (nonatomic, copy) NSString *name;
 
-- (id)initWithPeripheral:(CBPeripheral *)peripheral uuid:(CBUUID *)uuid;
-+ (id)withPeripheral:(CBPeripheral *)peripheral uuid:(CBUUID *)uuid;
+- (id)initWithPeripheral:(CBPeripheral *)peripheral
+                    uuid:(CBUUID *)uuid
+                    name:(NSString *)name;
+
++ (id)withPeripheral:(CBPeripheral *)peripheral
+                uuid:(CBUUID *)uuid
+                name:(NSString *)name;
 
 - (void)addService:(CBService *)service;
 - (NSString *)CBUUIDAsString;

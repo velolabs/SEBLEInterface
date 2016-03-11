@@ -11,21 +11,22 @@
 
 @implementation SEBLEPeripheral
 
-- (id)initWithPeripheral:(CBPeripheral *)peripheral uuid:(CBUUID *)uuid
+- (id)initWithPeripheral:(CBPeripheral *)peripheral uuid:(CBUUID *)uuid name:(NSString *)name
 {
     self = [super init];
     if (self) {
         _peripheral = peripheral;
         _services = [NSMutableDictionary new];
         _uuid = uuid;
+        _name = name;
     }
     
     return  self;
 }
 
-+ (id)withPeripheral:(CBPeripheral *)peripheral uuid:(CBUUID *)uuid
++ (id)withPeripheral:(CBPeripheral *)peripheral uuid:(CBUUID *)uuid name:(NSString *)name
 {
-    return [[self alloc] initWithPeripheral:peripheral uuid:uuid];
+    return [[self alloc] initWithPeripheral:peripheral uuid:uuid name:name];
 }
 
 - (void)addService:(CBService *)service
