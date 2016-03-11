@@ -17,25 +17,36 @@
 @protocol SEBLEInterfaceManagerDelegate <NSObject>
 
 - (void)bleInterfaceManager:(SEBLEInterfaceMangager *)interfaceManager
-          updatedPeripheral:(SEBLEPeripheral *)peripheral
+     updatedPeripheralNamed:(NSString *)peripheralName
       forCharacteristicUUID:(NSString *)characteristicUUID
                    withData:(NSData *)data;
 
 - (void)bleInterfaceManager:(SEBLEInterfaceMangager *)interfaceManger
-       discoveredPeripheral:(SEBLEPeripheral *)peripheral;
+       discoveredPeripheral:(SEBLEPeripheral *)peripheral
+       withAdvertisemntData:(NSDictionary *)advertisementData;
 
 - (void)bleInterfaceManager:(SEBLEInterfaceMangager *)interfaceManager
-        connectedPeripheral:(SEBLEPeripheral *)peripheral;
+        connectedPeripheralNamed:(NSString *)peripheralName;
+
+- (void)bleInterfaceManager:(SEBLEInterfaceMangager *)interfaceManager discoveredServicesForPeripheralNamed:(NSString *)peripheralName;
 
 - (void)bleInterfaceManager:(SEBLEInterfaceMangager *)interfaceManager
-     disconnectedPeripheral:(SEBLEPeripheral *)peripheral;
+discoveredCharacteristicsForService:(CBService *)service
+         forPeripheralNamed:(NSString *)peripheralName;
+
+- (void)bleInterfaceManager:(SEBLEInterfaceMangager *)interfaceManager
+     disconnectedPeripheralNamed:(NSString *)peripheralName;
 
 - (void)bleInterfaceManagerIsPoweredOn:(SEBLEInterfaceMangager *)interfaceManager;
 
 - (void)bleInterfaceManager:(SEBLEInterfaceMangager *)interfaceManager
-                 peripheral:(SEBLEPeripheral *)peripheral
+             peripheralName:(NSString *)peripheralName
 changedUpdateStateForCharacteristic:(NSString *)characteristicUUID;
 
+- (void)bleInterfaceManager:(SEBLEInterfaceMangager *)interfaceManager
+wroteValueToPeripheralNamed:(NSString *)peripheralName
+                    forUUID:(NSString *)uuid
+           withWriteSuccess:(BOOL)success;
 @end
 
 @interface SEBLEInterfaceMangager : NSObject<CBCentralManagerDelegate, CBPeripheralDelegate>
@@ -45,10 +56,13 @@ changedUpdateStateForCharacteristic:(NSString *)characteristicUUID;
 + (id)sharedManager;
 - (void)addPeripheralNamed:(NSString *)name;
 - (void)removePeripheralNamed:(NSString *)name;
-- (void)writeToPeripheralWithName:(NSString *)peripheralName
-                      serviceUUID:(NSString *)serviceUUID
-               characteristicUUID:(NSString *)characteristicUUID
-                             data:(NSData *)data;
+- (void)writeToPeripheralWithKey:(NSString *)key
+                     serviceUUID:(NSString *)serviceUUID
+              characteristicUUID:(NSString *)characteristicUUID
+                            data:(NSData *)data;
+- (void)readValueForPeripheralWithKey:(NSString *)key
+                       forServiceUUID:(NSString *)serviceUUID
+                andCharacteristicUUID:(NSString *)characteristicUUID;
 - (void)startScan;
 - (void)stopScan;
 - (void)powerOn;
@@ -59,24 +73,25 @@ changedUpdateStateForCharacteristic:(NSString *)characteristicUUID;
 - (void)setCharacteristicsToReadFrom:(NSSet *)characteristicsToRead;
 - (void)setCharacteristicsToReceiveNotificationsFrom:(NSSet *)notificationsToRecieve;
 - (void)setServicesToNotifyWhenTheyAreDiscoverd:(NSSet *)servicesToNotify;
-- (void)readValueForPeripheralNamed:(NSString *)peripheralName
-                     forServiceUUID:(NSString *)serviceUUID
-              andCharacteristicUUID:(NSString *)characteristicUUID;
-- (void)updateConnectPeripheralKey:(NSString *)oldKey newKey:(NSString *)newKey;
 
+- (void)updateConnectPeripheralKey:(NSString *)oldKey newKey:(NSString *)newKey;
+- (void)discoverServicesForPeripheralKey:(NSString *)key;
+- (void)discoverCharacteristicsForService:(CBService *)service forPeripheralKey:(NSString *)key;
 /*
  * not connected peripheral methods
  */
-- (void)setNotConnectedPeripheral:(SEBLEPeripheral *)seblePeripheral forKey:(NSString *)key;
+- (void)setNotConnectedPeripheral:(SEBLEPeripheral *)blePeripheral forKey:(NSString *)key;
 - (void)removeNotConnectPeripheralForKey:(NSString *)key;
-- (BOOL)notConnectPeripheralsHasPeripheralForKey:(NSString *)key;
+- (SEBLEPeripheral *)notConnectedPeripheralForKey:(NSString *)key;
 
 /*
  * connect peripheral methods
  */
 - (void)setConnectedPeripheral:(SEBLEPeripheral *)seblePeripheral forKey:(NSString *)key;
-- (void)removeConnectPeripheralForKey:(NSString *)key;
-- (BOOL)connectPeripheralsHasPeripheralForKey:(NSString *)key;
+- (void)removeConnectedPeripheralForKey:(NSString *)key;
+- (SEBLEPeripheral *)connectPeripheralsForKey:(NSString *)key;
+- (void)discoverServices:(NSArray *)services forPeripheralWithKey:(NSString *)key;
+
 // remove me...just for testing
 - (void)runTests;
 
