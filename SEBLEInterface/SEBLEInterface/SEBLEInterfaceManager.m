@@ -102,6 +102,8 @@
         NSLog(@"Adding peripheral named: %@", name);
         SEBLEPeripheral *blePeripheral = self.notConnectedPeripherals[name];
         [self.centralManager connectPeripheral:blePeripheral.peripheral options:nil];
+    } else {
+        NSLog(@"WARNING - Trying to add %@, but it is not in notConnectedPeripherals", name);
     }
 }
 
@@ -124,10 +126,10 @@
     [self shouldConnectToDeviceNamed:advertisementData[kSEBLEInterfaceDataLocalName]];
 }
 
-- (void)removePeripheralNamed:(NSString *)name
+- (void)removeConnectedPeripheralForKey:(NSString *)key
 {
-    if (self.connectedPeripherals[name]) {
-        [self.connectedPeripherals removeObjectForKey:name];
+    if (self.connectedPeripherals[key]) {
+        [self.connectedPeripherals removeObjectForKey:key];
     }
 }
 
