@@ -219,7 +219,7 @@
     self.connectedPeripherals[key] = blePeripheral;
 }
 
-- (void)removeConnectPeripheralForKey:(NSString *)key
+- (void)removeConnectedPeripheralForKey:(NSString *)key
 {
     if (self.connectedPeripherals[key]) {
         [self.connectedPeripherals removeObjectForKey:key];
