@@ -54,8 +54,8 @@ wroteValueToPeripheralNamed:(NSString *)peripheralName
 @property (nonatomic, weak) id<SEBLEInterfaceManagerDelegate>delegate;
 
 + (id)sharedManager;
-- (void)addPeripheralNamed:(NSString *)name;
-- (void)removePeripheralNamed:(NSString *)name;
+- (void)addPeripheralWithKey:(NSString *)key;
+- (void)removePeripheralForKey:(NSString *)key;
 - (void)writeToPeripheralWithKey:(NSString *)key
                      serviceUUID:(NSString *)serviceUUID
               characteristicUUID:(NSString *)characteristicUUID

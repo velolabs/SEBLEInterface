@@ -96,14 +96,14 @@
     self.servicesToNotifyWhenDiscoverd = servicesToNotify;
 }
 
-- (void)addPeripheralNamed:(NSString *)name
+- (void)addPeripheralWithKey:(NSString *)key
 {
-    if (self.notConnectedPeripherals[name]) {
-        NSLog(@"Adding peripheral named: %@", name);
-        SEBLEPeripheral *blePeripheral = self.notConnectedPeripherals[name];
+    if (self.notConnectedPeripherals[key]) {
+        NSLog(@"Adding peripheral with key: %@", key);
+        SEBLEPeripheral *blePeripheral = self.notConnectedPeripherals[key];
         [self.centralManager connectPeripheral:blePeripheral.peripheral options:nil];
     } else {
-        NSLog(@"WARNING - Trying to add %@, but it is not in notConnectedPeripherals", name);
+        NSLog(@"WARNING - Trying to add %@, but it is not in notConnectedPeripherals", key);
     }
 }
 
@@ -217,13 +217,6 @@
 {
     blePeripheral.peripheral.delegate = self;
     self.connectedPeripherals[key] = blePeripheral;
-}
-
-- (void)removeConnectedPeripheralForKey:(NSString *)key
-{
-    if (self.connectedPeripherals[key]) {
-        [self.connectedPeripherals removeObjectForKey:key];
-    }
 }
 
 - (void)discoverServices:(NSArray *)services forPeripheralWithKey:(NSString *)key
