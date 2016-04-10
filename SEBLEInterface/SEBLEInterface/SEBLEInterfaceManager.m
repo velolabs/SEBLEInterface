@@ -366,7 +366,7 @@ didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic
     
     NSString *uuid = [NSString stringWithFormat:@"%@", characteristic.UUID];
     if ([self.charToRead containsObject:uuid]) {
-        NSLog(@"Valued updated for peripheral: %@ for characteristic uuid :%@ wihttps://github.com/sugarcrm/stacksth number of bytes: %@",
+        NSLog(@"Valued updated for peripheral: %@ for characteristic uuid :%@ with number of bytes: %@",
               peripheral.name,
               uuid,
               @(characteristic.value.length));
