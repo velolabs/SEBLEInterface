@@ -450,8 +450,6 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
               error);
     }
     
-    
-    
     // TODO -- move this logic to the delegate
     if (self.connectedPeripherals[peripheral.name]) {
         [self.connectedPeripherals removeObjectForKey:peripheral.name];
