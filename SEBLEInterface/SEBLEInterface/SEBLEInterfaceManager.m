@@ -168,8 +168,6 @@
     SEBLEPeripheral *blePeripheral = self.connectedPeripherals[key];
     NSDictionary *characteristics = blePeripheral.services[serviceUUID][kSEBLEPeripheralCharacteristics];
     CBCharacteristic *characteristic = characteristics[characteristicUUID];
-    u_int16_t input;
-    [data getBytes:&input length:sizeof(input)];
     
     [blePeripheral.peripheral writeValue:data
                        forCharacteristic:characteristic
