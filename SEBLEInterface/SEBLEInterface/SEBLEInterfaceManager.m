@@ -29,6 +29,7 @@
 @property (nonatomic, strong) NSSet *charToNotifiy;
 @property (nonatomic, strong) NSSet *servicesToNotifyWhenDiscoverd;
 @property (nonatomic, assign) BOOL isPoweredOn;
+@property (nonatomic, assign) BOOL isScanning;
 
 @end
 
@@ -42,6 +43,7 @@
         _notConnectedPeripherals        = [NSMutableDictionary new];
         _connectedPeripherals           = [NSMutableDictionary new];
         _isPoweredOn                    = NO;
+        _isScanning                     = NO;
     }
     
     return self;
@@ -66,14 +68,16 @@
 
 - (void)startScan
 {
-    if (self.isPoweredOn) {
+    if (self.isPoweredOn && !self.isScanning) {
         [self.centralManager scanForPeripheralsWithServices:nil options:nil];
+        self.isScanning = YES;
     }
 }
 
 - (void)stopScan
 {
     [self.centralManager stopScan];
+    self.isScanning = NO;
 }
 
 - (void)setServiceToReadFrom:(NSSet *)serviceNames
@@ -415,10 +419,12 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
               peripheral.name,
               [NSString stringWithFormat:@"%@", characteristic.UUID],
               error);
-    } else if (error && error.code == 15) {
-        NSLog(@"Handling error: %@. Retrying setting the notification state.", error.localizedDescription);
-        [peripheral setNotifyValue:YES forCharacteristic:characteristic];
-    } else {
+    }
+//    } else if (error && error.code == 15) {
+//        NSLog(@"Handling error: %@. Retrying setting the notification state.", error.localizedDescription);
+//        [peripheral setNotifyValue:YES forCharacteristic:characteristic];
+//    }
+    else {
         NSLog(@"Updating notification state for: %@ for characteristic: %@",
               peripheral.name,
               [NSString stringWithFormat:@"%@", characteristic.UUID]);
