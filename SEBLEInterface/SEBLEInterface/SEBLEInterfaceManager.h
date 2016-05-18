@@ -56,6 +56,7 @@ wroteValueToPeripheralNamed:(NSString *)peripheralName
 + (id)sharedManager;
 - (void)addPeripheralWithKey:(NSString *)key;
 - (void)removePeripheralForKey:(NSString *)key;
+- (void)removeConnectedPeripheralForKey:(NSString *)key;
 - (void)writeToPeripheralWithKey:(NSString *)key
                      serviceUUID:(NSString *)serviceUUID
               characteristicUUID:(NSString *)characteristicUUID

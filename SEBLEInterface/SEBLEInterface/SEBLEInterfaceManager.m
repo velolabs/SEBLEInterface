@@ -137,6 +137,12 @@
     }
 }
 
+- (void)removePeripheralForKey:(NSString *)key
+{
+    [self removeConnectedPeripheralForKey:key];
+    [self removeNotConnectPeripheralForKey:key];
+}
+
 - (void)removeNotConnectPeripherals
 {
     [self.notConnectedPeripherals removeAllObjects];
