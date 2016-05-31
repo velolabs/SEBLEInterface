@@ -39,7 +39,9 @@
 {
     self = [super init];
     if (self) {
-        _centralManager                 = [[CBCentralManager alloc] initWithDelegate:self queue:nil];
+        _centralManager                 = [[CBCentralManager alloc] initWithDelegate:self
+                                                                               queue:nil
+                                                                             options:@{CBCentralManagerOptionShowPowerAlertKey: @(YES)}];
         _notConnectedPeripherals        = [NSMutableDictionary new];
         _connectedPeripherals           = [NSMutableDictionary new];
         _isPoweredOn                    = NO;
