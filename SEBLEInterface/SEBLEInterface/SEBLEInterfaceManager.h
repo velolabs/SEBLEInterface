@@ -89,7 +89,6 @@ wroteValueToPeripheralNamed:(NSString *)peripheralName
  * connect peripheral methods
  */
 - (void)setConnectedPeripheral:(SEBLEPeripheral *)seblePeripheral forKey:(NSString *)key;
-- (void)removeConnectedPeripheralForKey:(NSString *)key;
 - (void)discoverServices:(NSArray *)services forPeripheralWithKey:(NSString *)key;
 
 @end
