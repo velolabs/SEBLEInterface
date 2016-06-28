@@ -82,6 +82,11 @@
     self.isScanning = NO;
 }
 
+- (BOOL)isCurrentlyScanning
+{
+    return self.isScanning;
+}
+
 - (void)setServiceToReadFrom:(NSSet *)serviceNames
 {
     self.servicesToRead = serviceNames;

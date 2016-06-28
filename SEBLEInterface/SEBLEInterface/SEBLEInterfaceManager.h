@@ -66,6 +66,7 @@ wroteValueToPeripheralNamed:(NSString *)peripheralName
                 andCharacteristicUUID:(NSString *)characteristicUUID;
 - (void)startScan;
 - (void)stopScan;
+- (BOOL)isCurrentlyScanning;
 - (void)powerOn;
 - (void)removeNotConnectPeripherals;
 - (void)setDeviceNamesToConnectTo:(NSSet *)namesToConnect;
