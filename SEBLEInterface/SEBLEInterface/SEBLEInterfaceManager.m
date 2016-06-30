@@ -234,6 +234,17 @@
     self.connectedPeripherals[key] = blePeripheral;
 }
 
+- (void)disconnectFromPeripheralWithKey:(NSString *)key
+{
+    if (!self.connectedPeripherals[key]) {
+        return;
+    }
+    
+    SEBLEPeripheral *peripheral = self.connectedPeripherals[key];
+    [self.connectedPeripherals removeObjectForKey:key];
+    [self.centralManager cancelPeripheralConnection:peripheral.peripheral];
+}
+
 - (void)discoverServices:(NSArray *)services forPeripheralWithKey:(NSString *)key
 {
     if (self.connectedPeripherals[key]) {
@@ -329,7 +340,6 @@
 - (void)centralManager:(CBCentralManager *)central didConnectPeripheral:(CBPeripheral *)peripheral
 {
     NSLog(@"connected peripheral named :%@", peripheral.name);
-    
     if ([self.delegate respondsToSelector:@selector(bleInterfaceManager:connectedPeripheralNamed:)]) {
         [self.delegate bleInterfaceManager:self connectedPeripheralNamed:peripheral.name];
     }
