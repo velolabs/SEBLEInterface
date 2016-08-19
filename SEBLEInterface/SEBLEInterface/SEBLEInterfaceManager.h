@@ -68,6 +68,7 @@ wroteValueToPeripheralNamed:(NSString *)peripheralName
 - (void)stopScan;
 - (BOOL)isCurrentlyScanning;
 - (void)powerOn;
+- (BOOL)isPowerOn;
 - (void)removeNotConnectPeripherals;
 - (void)setDeviceNamesToConnectTo:(NSSet *)namesToConnect;
 - (void)setDeviceNameFragmentsToConnect:(NSArray *)fragmentsToConnect;
