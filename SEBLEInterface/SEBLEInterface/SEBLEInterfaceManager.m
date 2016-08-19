@@ -87,6 +87,11 @@
     return self.isScanning;
 }
 
+- (BOOL)isPowerOn
+{
+    return self.isPoweredOn;
+}
+
 - (void)setServiceToReadFrom:(NSSet *)serviceNames
 {
     self.servicesToRead = serviceNames;
