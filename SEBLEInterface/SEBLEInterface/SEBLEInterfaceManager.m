@@ -332,7 +332,6 @@
         NSArray *UUIDs = advertisementData[kSEBLEInterfaceDataServiceUUIDs];
         NSString *name = advertisementData[kSEBLEInterfaceDataLocalName];
         SEBLEPeripheral *blePeripheral = [SEBLEPeripheral withPeripheral:peripheral uuid:UUIDs[0] name:name];
-        
         if ([self.delegate respondsToSelector:
              @selector(bleInterfaceManager:discoveredPeripheral:withAdvertisemntData:)]) {
             [self.delegate bleInterfaceManager:self
@@ -374,6 +373,7 @@ didDiscoverCharacteristicsForService:(CBService *)service
         return;
     }
     
+    NSLog(@"BLEManager discoved characteristics for service: %@", service.UUID.UUIDString);
     if ([self.delegate respondsToSelector:
          @selector(bleInterfaceManager:discoveredCharacteristicsForService:forPeripheralNamed:)]) {
         [self.delegate bleInterfaceManager:self
