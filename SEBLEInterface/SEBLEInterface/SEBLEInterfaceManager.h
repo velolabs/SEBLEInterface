@@ -54,7 +54,7 @@ wroteValueToPeripheralNamed:(NSString *)peripheralName
 @property (nonatomic, weak) id<SEBLEInterfaceManagerDelegate>delegate;
 
 + (id)sharedManager;
-- (void)addPeripheralWithKey:(NSString *)key;
+- (void)connectToPeripheralWithKey:(NSString *)key;
 - (void)removePeripheralForKey:(NSString *)key;
 - (void)removeConnectedPeripheralForKey:(NSString *)key;
 - (void)writeToPeripheralWithKey:(NSString *)key
@@ -80,6 +80,9 @@ wroteValueToPeripheralNamed:(NSString *)peripheralName
 - (void)updateConnectPeripheralKey:(NSString *)oldKey newKey:(NSString *)newKey;
 - (void)discoverServicesForPeripheralKey:(NSString *)key;
 - (void)discoverCharacteristicsForService:(CBService *)service forPeripheralKey:(NSString *)key;
+- (BOOL)hasNonConnectedPeripheralWithKey:(NSString *)key;
+- (BOOL)hasConnectedPeripheralWithKey:(NSString *)key;
+
 /*
  * not connected peripheral methods
  */
