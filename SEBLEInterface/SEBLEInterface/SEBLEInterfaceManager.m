@@ -129,12 +129,12 @@
 
 - (BOOL)hasNonConnectedPeripheralWithKey:(NSString *)key
 {
-    return self.notConnectedPeripherals[key];
+    return self.notConnectedPeripherals[key] != nil;
 }
 
 - (BOOL)hasConnectedPeripheralWithKey:(NSString *)key
 {
-    return self.connectedPeripherals[key];
+    return self.connectedPeripherals[key] != nil;
 }
 
 - (BOOL)shouldConnectToDeviceNamed:(NSString *)name
