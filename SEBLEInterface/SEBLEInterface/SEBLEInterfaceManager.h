@@ -16,6 +16,9 @@
 
 @protocol SEBLEInterfaceManagerDelegate <NSObject>
 
+- (void)bleInterfaceManagerIsPoweredOn:(SEBLEInterfaceMangager *)interfaceManager;
+
+- (void)bleInterfaceManagerIsPoweredOff:(SEBLEInterfaceMangager *)interfaceManager;
 - (void)bleInterfaceManager:(SEBLEInterfaceMangager *)interfaceManager
      updatedPeripheralNamed:(NSString *)peripheralName
       forCharacteristicUUID:(NSString *)characteristicUUID
@@ -36,8 +39,6 @@ discoveredCharacteristicsForService:(CBService *)service
 
 - (void)bleInterfaceManager:(SEBLEInterfaceMangager *)interfaceManager
      disconnectedPeripheralNamed:(NSString *)peripheralName;
-
-- (void)bleInterfaceManagerIsPoweredOn:(SEBLEInterfaceMangager *)interfaceManager;
 
 - (void)bleInterfaceManager:(SEBLEInterfaceMangager *)interfaceManager
              peripheralName:(NSString *)peripheralName
