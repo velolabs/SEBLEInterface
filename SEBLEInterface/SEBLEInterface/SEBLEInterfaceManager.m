@@ -312,6 +312,10 @@
     switch (central.state) {
         case CBCentralManagerStatePoweredOff:
             NSLog(@"CoreBluetooth BLE hardware is powered off");
+            self.isPoweredOn = NO;
+            if ([self.delegate respondsToSelector:@selector(bleInterfaceManagerIsPoweredOff:)]) {
+                [self.delegate bleInterfaceManagerIsPoweredOff:self];
+            }
             break;
         case CBCentralManagerStatePoweredOn:
             NSLog(@"CoreBluetooth BLE hardware is powered on and ready");
@@ -495,15 +499,6 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
         NSLog(@"Error: disconnecting from periphreal: %@, with error: %@",
               peripheral.name,
               error);
-    }
-    
-    // TODO -- move this logic to the delegate
-    if (self.connectedPeripherals[peripheral.name]) {
-        [self.connectedPeripherals removeObjectForKey:peripheral.name];
-    }
-    
-    if (self.notConnectedPeripherals[peripheral.name]) {
-        [self.notConnectedPeripherals removeObjectForKey:peripheral.name];
     }
     
     if ([self.delegate respondsToSelector:@selector(bleInterfaceManager:disconnectedPeripheralNamed:)]) {
