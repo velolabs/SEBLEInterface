@@ -19,6 +19,7 @@
 - (void)bleInterfaceManagerIsPoweredOn:(SEBLEInterfaceMangager *)interfaceManager;
 
 - (void)bleInterfaceManagerIsPoweredOff:(SEBLEInterfaceMangager *)interfaceManager;
+
 - (void)bleInterfaceManager:(SEBLEInterfaceMangager *)interfaceManager
      updatedPeripheralNamed:(NSString *)peripheralName
       forCharacteristicUUID:(NSString *)characteristicUUID
