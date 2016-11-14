@@ -466,12 +466,7 @@ didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
               peripheral.name,
               [NSString stringWithFormat:@"%@", characteristic.UUID],
               error);
-    }
-//    } else if (error && error.code == 15) {
-//        NSLog(@"Handling error: %@. Retrying setting the notification state.", error.localizedDescription);
-//        [peripheral setNotifyValue:YES forCharacteristic:characteristic];
-//    }
-    else {
+    } else {
         NSLog(@"Updating notification state for: %@ for characteristic: %@",
               peripheral.name,
               [NSString stringWithFormat:@"%@", characteristic.UUID]);
