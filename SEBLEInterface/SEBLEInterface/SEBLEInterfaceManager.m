@@ -265,6 +265,20 @@
     [self.centralManager cancelPeripheralConnection:peripheral.peripheral];
 }
 
+- (void)setCharacteristicUUIDToNotify:(NSString *)uuid forPeripheralWithKey:(NSString *)key
+{
+    if (!self.connectedPeripherals[uuid]) {
+        NSLog(@"Could not set %@ to notify for peripheral %@ since it is not connected", uuid, key);
+        return;
+    }
+    
+    SEBLEPeripheral *blePeripheral = self.connectedPeripherals[uuid];
+    CBCharacteristic *characteristic = [blePeripheral characteristicForUUID:uuid];
+    if (characteristic) {
+        [blePeripheral.peripheral setNotifyValue:YES forCharacteristic:characteristic];
+    }
+}
+
 - (void)discoverServices:(NSArray *)services forPeripheralWithKey:(NSString *)key
 {
     if (self.connectedPeripherals[key]) {
