@@ -84,7 +84,7 @@ wroteValueToPeripheralNamed:(NSString *)peripheralName
 - (void)discoverCharacteristicsForService:(CBService *)service forPeripheralKey:(NSString *)key;
 - (BOOL)hasNonConnectedPeripheralWithKey:(NSString *)key;
 - (BOOL)hasConnectedPeripheralWithKey:(NSString *)key;
-
+- (void)setCharacteristicUUIDToNotify:(NSString *)uuid forPeripheralWithKey:(NSString *)key;
 /*
  * not connected peripheral methods
  */

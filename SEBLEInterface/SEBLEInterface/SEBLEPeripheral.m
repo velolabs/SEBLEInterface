@@ -55,5 +55,19 @@
     return [NSString stringWithFormat:@"%@", self.uuid];
 }
 
+- (CBCharacteristic *)characteristicForUUID:(NSString *)uuid
+{
+    for (NSString *serviceUUID in self.services.allKeys) {
+        NSMutableDictionary *characteristics = self.services[serviceUUID][kSEBLEPeripheralCharacteristics];
+        for (NSString *characteristicUUID in characteristics.allKeys) {
+            if ([characteristicUUID isEqualToString:uuid]) {
+                return characteristics[characteristicUUID];
+            }
+        }
+    }
+    
+    return nil;
+}
+
 @end
 

@@ -32,5 +32,6 @@
 - (void)addService:(CBService *)service;
 - (NSString *)CBUUIDAsString;
 - (void)addCharacteristic:(CBCharacteristic *)characteristic forService:(CBService *)service;
+- (CBCharacteristic *)characteristicForUUID:(NSString *)uuid;
 
 @end
