@@ -327,6 +327,7 @@
         case CBCentralManagerStatePoweredOff:
             NSLog(@"CoreBluetooth BLE hardware is powered off");
             self.isPoweredOn = NO;
+            self.isScanning = NO;
             if ([self.delegate respondsToSelector:@selector(bleInterfaceManagerIsPoweredOff:)]) {
                 [self.delegate bleInterfaceManagerIsPoweredOff:self];
             }
