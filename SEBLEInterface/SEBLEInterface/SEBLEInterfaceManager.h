@@ -49,11 +49,16 @@ changedUpdateStateForCharacteristic:(NSString *)characteristicUUID;
 wroteValueToPeripheralNamed:(NSString *)peripheralName
                     forUUID:(NSString *)uuid
            withWriteSuccess:(BOOL)success;
+
+- (void)bleInterfaceManager:(SEBLEInterfaceMangager *)interfaceManager
+restoredPeripherals:(NSArray *)peripherals;
+
 @end
 
 @interface SEBLEInterfaceMangager : NSObject<CBCentralManagerDelegate, CBPeripheralDelegate>
 
 @property (nonatomic, weak) id<SEBLEInterfaceManagerDelegate>delegate;
+@property (nonatomic, assign) BOOL isInBackground;
 
 + (id)sharedManager;
 - (void)connectToPeripheralWithKey:(NSString *)key;
@@ -85,6 +90,7 @@ wroteValueToPeripheralNamed:(NSString *)peripheralName
 - (BOOL)hasNonConnectedPeripheralWithKey:(NSString *)key;
 - (BOOL)hasConnectedPeripheralWithKey:(NSString *)key;
 - (void)setCharacteristicUUIDToNotify:(NSString *)uuid forPeripheralWithKey:(NSString *)key;
+- (SEBLEPeripheral *)seblePeripheralForCBPeripheral:(CBPeripheral *)peripheral;
 /*
  * not connected peripheral methods
  */
@@ -98,5 +104,7 @@ wroteValueToPeripheralNamed:(NSString *)peripheralName
 - (void)disconnectFromPeripheralWithKey:(NSString *)key;
 - (void)setConnectedPeripheral:(SEBLEPeripheral *)seblePeripheral forKey:(NSString *)key;
 - (void)discoverServices:(NSArray *)services forPeripheralWithKey:(NSString *)key;
+- (void)connectToPeripheralFromBackgroundWithUUID:(NSString *)uuid;
+- (SEBLEPeripheral *)connectedPeripheralForKey:(NSString *)key;
 
 @end
